@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=C64U Slim-Viewer
+Comment=Videostream-Viewer for Commodore 64 Ultimate in .NET 8.0
+Exec=/usr/share/c64uviewer/c64uviewer
+Icon=c64uviewer
+Terminal=false
+Categories=AudioVideo;

@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ValidateExecutableReferencesRuntimeRequired>false</ValidateExecutableReferencesRuntimeRequired>
+    <NoWarn>$(NoWarn);NETSDK1206</NoWarn>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifiers>linux-x64;win-x64</RuntimeIdentifiers>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <AssemblyName>c64uviewer</AssemblyName>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <Authors>Grütze-Software</Authors>
+    <Product>C64U Slim-Viewer</Product>
+    <PackageIcon>icon.png</PackageIcon>
+    <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
+    <Description>Videostream-Viewer for Commodore 64 Ultimate in .NET 8.0</Description>
+    <Copyright>Copyright © 2026 Grütze-Software</Copyright>
+    <Maintainer>schaefer.christoph@posteo.de</Maintainer>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageId>c64uviewer</PackageId>
+    <PackageProjectUrl>https://github.com/gruetze-software/C64U-Slim-Viewer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gruetze-software/C64U-Slim-Viewer.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <PackageReference Include="Avalonia" Version="11.3.10" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.10" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.10" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <AvaloniaResource Include="Assets\**" />
+    <Content Include="Assets/icon.png">
+      <Pack>true</Pack>
+      <PackagePath>usr/share/icons/hicolor/256x256/apps/c64uviewer.png</PackagePath>
+    </Content>
+    <Content Include="c64uviewer.desktop">
+      <Pack>true</Pack>
+      <PackagePath>usr/share/applications/c64uviewer.desktop</PackagePath>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.10">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+  </ItemGroup>
+</Project>

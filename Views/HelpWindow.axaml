@@ -1,0 +1,91 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="C64UViewer.Views.HelpWindow"
+        Title="C64U Slim-Viewer - Instructions" Width="500" Height="500"
+        Icon="/Assets/icon.ico"
+        WindowStartupLocation="CenterOwner" Background="#1C1C1C" Foreground="White">
+
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="25">
+            <TextBlock Grid.Row="0" Text="Instructions" FontSize="22" FontWeight="Bold" Foreground="#44A044" Margin="0,0,0,5"/>
+            <Separator Grid.Row="1" Background="#44A044" Margin="0,0,0,20"/>
+
+            <ScrollViewer Grid.Row="2">
+                <StackPanel Spacing="15">
+                    
+                    <Grid ColumnDefinitions="30,*">
+                        <TextBlock Grid.Column="0" Text="1." FontWeight="Bold" Foreground="#44A044"/>
+                        <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
+                                Text="Make sure your Commodore 64 Ultimate (C64U) is on the same network as this PC. Connect your C64U to your network via LAN connection. Disable WLAN on C64U."/>
+                    </Grid>
+                    <Grid ColumnDefinitions="30,*">
+                        <TextBlock Grid.Column="0" Text="2." FontWeight="Bold" Foreground="#44A044"/>
+                        <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
+                                Text="Find the IP address of the C64U and enter it in the top left corner. Ideally, you should configure your router to assign this IP address directly to the C64U."/>
+                    </Grid>
+                    <Grid ColumnDefinitions="30,*">
+                        <TextBlock Grid.Column="0" Text="3." FontWeight="Bold" Foreground="#44A044"/>
+                        <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
+                                Text="Ensure that port 11000 for UDP is open in the client's firewall."/>
+                    </Grid>
+                    <Grid ColumnDefinitions="30,*">
+                        <TextBlock Grid.Column="0" Text="4." FontWeight="Bold" Foreground="#44A044"/>
+                        <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
+                                Text="In the C64U main menu, press F3 (SHIFT+F2): Data Streams -> Stream VIC to: Replace the IP address with your client-Ip with port 11000."/>
+                        </Grid>
+                    <Grid ColumnDefinitions="30,*">
+                        <TextBlock Grid.Column="0" Text="5." FontWeight="Bold" Foreground="#44A044"/>
+                        <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
+                                Text="In the C64U main menu F1: Streams -> VIC Streams -> Send to [Client-IP]:11000, Enter."/>
+                    </Grid>
+                     <Grid ColumnDefinitions="30,*">
+                        <TextBlock Grid.Column="0" Text="6." FontWeight="Bold" Foreground="#44A044"/>
+                        <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
+                                Text="Then click the 'Start Stream' button here."/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Button Grid.Row="3" 
+                Content="Close" 
+                HorizontalAlignment="Center" 
+                Padding="30,10"
+                FontSize="16"
+                FontWeight="Bold"
+                Click="CloseClick" 
+                Margin="0,20,0,0">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="#44A044" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="CornerRadius" Value="4" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="#55C055" />
+                        <Setter Property="TextBlock.Foreground" Value="White" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <TextBlock Text="Created by Grütze-Software" 
+                        FontSize="10" 
+                        Foreground="#888888" 
+                        HorizontalAlignment="Right"/>
+                <Button Content="Visit my Homepage on GitHub" 
+                        FontSize="10" 
+                        Foreground="#44A044"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Padding="0"
+                        Cursor="Hand"
+                        Click="LinkClick">
+                    <Button.Styles>
+                        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="TextBlock.Foreground" Value="#55C055" />
+                            <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                        </Style>
+                    </Button.Styles>
+                </Button>
+            </StackPanel>
+        </Grid>    
+</Window>

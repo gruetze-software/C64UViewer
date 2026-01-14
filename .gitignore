@@ -1,0 +1,17 @@
+# .NET Build-Ordner
+bin/
+obj/
+
+# VS Code Einstellungen & Cache
+.vscode/
+.vs/
+dist/
+
+# User-spezifische Einstellungen (wie deine gespeicherte IP für Tests)
+*.user
+settings.json
+
+
+# Betriebssystem-Müll
+.DS_Store
+Thumbs.db
