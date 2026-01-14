@@ -1,6 +1,7 @@
 # .NET Build-Ordner
 bin/
 obj/
+debian_folder/
 
 # VS Code Einstellungen & Cache
 .vscode/

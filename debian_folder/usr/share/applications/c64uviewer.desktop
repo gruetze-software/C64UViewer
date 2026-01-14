@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=C64U Slim-Viewer
-Comment=Videostream Viewer for Commodore 64 Ultimate
-Exec=C64UViewer
-Icon=c64uviewer
-Terminal=false
-Categories=Utility;Video;
