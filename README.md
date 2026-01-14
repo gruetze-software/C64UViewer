@@ -44,6 +44,7 @@ Follow these steps to establish a connection between your C64U and this viewer.
 ### 3. Firewall Settings
 * Ensure that **Port 11000 for UDP** is open in your PC's firewall. This port is required to receive the incoming data stream.
 * **Windows:** You usually don't need to do anything. Windows Firewall will automatically ask for permission on the first startup. Ensure you allow access.
+* <img width="400" height="400" alt="grafik" src="https://github.com/user-attachments/assets/86ad588c-1366-42ca-b1be-bd057872ba39" />
 * **Linux:** Most distributions (like Ubuntu, Mint, Debian) don't block this by default. However, if you have a strict firewall enabled (like `ufw`), you must manually allow UDP traffic:
     ```bash
     sudo ufw allow 11000/udp
@@ -64,9 +65,7 @@ Now, you need to tell your Ultimate 64 where to send the video data:
 * In the C64U main menu, press **F1**.
 * Navigate to `Streams` -> `VIC Streams` -> `Send to [Client-IP]:11000`.
 * Press **Enter**.
-* 
-<img width="600" height="382" alt="grafik" src="https://github.com/user-attachments/assets/a1837b2b-599c-42d9-b24a-9a9d45745de3" />
-
+<img width="600" height="378" alt="grafik" src="https://github.com/user-attachments/assets/06b160c0-1922-40c4-be4b-4f82b7a9f360" />
 
 ### 5. Final Step
 * Click the **'Start Stream'** button within the C64U Slim-Viewer application.
