@@ -16,6 +16,11 @@ The **C64U Slim-Viewer** allows you to stream the VIC-II video output of your Ul
 * 🔄 **Auto-Update Check:** In-app notifications for new GitHub releases.
 * 🐧 **Cross-Platform:** Native support for Linux (.deb) and Windows.
 
+### ☕ Support
+This software is a passion project by a private developer. If you find it useful, your support is greatly appreciated!
+
+**[➡️ Buy me a coffee on Ko-fi](https://ko-fi.com/gruetzesoftware)**
+
 ---
 
 ## 🔌 Setup Instructions
@@ -80,4 +85,6 @@ Now, you need to tell your Ultimate 64 where to send the video data:
 This project is licensed under the **MIT License**.
 
 ## ❤️ Credits
-Developed by **Grütze-Software**. Special thanks to the C64 community and Gideon's Logic.
+* Developed by **Grütze-Software**. 
+* **Special Thanks to [Perifractic (RetroRecipes)](https://www.youtube.com/@Perifractic):** For his incredible passion, for bringing the C64 into the modern era, and for inspiring projects that bridge the gap between retro and contemporary computing.
+* **Gideon's Logic:** For creating the amazing Ultimate 64 hardware.
