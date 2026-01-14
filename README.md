@@ -16,6 +16,12 @@ The **C64U Slim-Viewer** allows you to stream the VIC-II video output of your Ul
 * 🔄 **Auto-Update Check:** In-app notifications for new GitHub releases.
 * 🐧 **Cross-Platform:** Native support for Linux (.deb) and Windows.
 
+### 🕹️ Supported Hardware
+* **Ultimate 64** / **Ultimate 64 Elite** (Full support)
+* **Ultimate-II+** (Standard version with Ethernet)
+* ⚠️ **Note:** The **Ultimate-II+L** (L-version) is **NOT supported**, as it lacks the video streaming capabilities in its hardware/firmware.
+  
+
 ### ☕ Support
 This software is a passion project by a private developer. If you find it useful, your support is greatly appreciated!
 
