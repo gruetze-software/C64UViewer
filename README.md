@@ -43,6 +43,11 @@ Follow these steps to establish a connection between your C64U and this viewer.
 
 ### 3. Firewall Settings
 * Ensure that **Port 11000 for UDP** is open in your PC's firewall. This port is required to receive the incoming data stream.
+* **Windows:** You usually don't need to do anything. Windows Firewall will automatically ask for permission on the first startup. Ensure you allow access.
+* **Linux:** Most distributions (like Ubuntu, Mint, Debian) don't block this by default. However, if you have a strict firewall enabled (like `ufw`), you must manually allow UDP traffic on your chosen port:
+    ```bash
+    sudo ufw allow 11000/udp
+    ```
 
 ### 4. Configure the C64U Hardware
 Now, you need to tell your Ultimate 64 where to send the video data:
