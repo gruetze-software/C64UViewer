@@ -53,20 +53,20 @@ Follow these steps to establish a connection between your C64U and this viewer.
 Now, you need to tell your Ultimate 64 where to send the video data:
 
 **Step A: Configure Data Streams**
-* In the C64U main menu, press **F3** (or SHIFT+F2).
+* In the C64U main menu, press **F2** (SHIFT+F1).
 * Navigate to `Data Streams` -> `Stream VIC to:`.
 * Replace the existing IP address with your **Client-IP** (your PC's IP) and port **11000**.
 
-> [!NOTE]
-> *Insert Screenshot of F3 Menu here*
+<img width="600" height="372" alt="grafik" src="https://github.com/user-attachments/assets/c8241b3a-8497-4ccb-9e07-38edec35a359" />
+<img width="600" height="387" alt="grafik" src="https://github.com/user-attachments/assets/5325ef9b-976e-4030-af0b-9e5c21d1a85a" />
 
 **Step B: Start the Stream**
 * In the C64U main menu, press **F1**.
 * Navigate to `Streams` -> `VIC Streams` -> `Send to [Client-IP]:11000`.
 * Press **Enter**.
+* 
+<img width="600" height="382" alt="grafik" src="https://github.com/user-attachments/assets/a1837b2b-599c-42d9-b24a-9a9d45745de3" />
 
-> [!NOTE]
-> *Insert Screenshot of F1 Menu here*
 
 ### 5. Final Step
 * Click the **'Start Stream'** button within the C64U Slim-Viewer application.
