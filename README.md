@@ -4,7 +4,7 @@
 
 A high-performance, lightweight remote video stream viewer specifically designed for the **Commodore 64 Ultimate (U64/U64E)**. Built with .NET 8 and Avalonia UI.
 
-<img width="800" height="604" alt="image" src="https://github.com/user-attachments/assets/ad4347cd-e98f-4274-95f0-e2efa5e19d1e" />
+<img width="864" height="682" alt="grafik" src="https://github.com/user-attachments/assets/28e98855-bf88-4be1-96b0-f32d154cf99f" />
 
 
 ## 📺 Overview
