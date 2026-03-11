@@ -7,6 +7,8 @@ namespace C64UViewer.Models;
 public class AppSettings
 {
     public int UdpPort { get; set; } = 11000;
+    public int UdpAudioPort { get; set; } = 11001;
+    public bool IsAudioEnabled { get; set; } = false;
     
     public static string FilePath
     {

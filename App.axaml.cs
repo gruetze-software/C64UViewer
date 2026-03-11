@@ -20,12 +20,20 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var viewModel = new MainWindowViewModel();
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
                 DataContext = new MainWindowViewModel(),
+            };
+
+            // Beim Beenden der App aufräumen
+            desktop.Exit += (sender, args) =>
+            {
+                // Wir rufen eine Cleanup-Methode im ViewModel auf
+                viewModel.OnExit();
             };
         }
 

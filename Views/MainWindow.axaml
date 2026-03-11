@@ -5,63 +5,78 @@
         x:DataType="vm:MainWindowViewModel"
         Title="{Binding AppTitle}"
         Background="#1C1C1C" Foreground="White"
-        Width="800" Height="600" WindowStartupLocation="CenterScreen">
-
-        <Window.Styles>
-            <Style Selector="Button">
-                <Setter Property="Background" Value="#444444" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="Padding" Value="15,5" />
-                <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="Transitions">
-                    <Transitions>
-                        <BrushTransition Property="Background" Duration="0:0:0.1" />
-                    </Transitions>
-                </Setter>
-            </Style>
-            <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                <Setter Property="Background" Value="#555555" />
-                <Setter Property="TextBlock.Foreground" Value="White" />
-            </Style>
-            <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-                <Setter Property="Background" Value="#44A044" /> <Setter Property="TextBlock.Foreground" Value="White" />
-            </Style>
-            <Style Selector="Button.UpdateBanner">
-                <Setter Property="Background" Value="#2196F3" />
-            </Style>
-            <Style Selector="Button.UpdateBanner:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                <Setter Property="Background" Value="#42A5F5" />
-            </Style>
-        </Window.Styles>
+        Width="950" Height="650" WindowStartupLocation="CenterScreen"> <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#444444" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Padding" Value="15,5" />
+            <Setter Property="CornerRadius" Value="5" />
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.1" />
+                </Transitions>
+            </Setter>
+        </Style>
+        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#555555" />
+            <Setter Property="TextBlock.Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#44A044" />
+            <Setter Property="TextBlock.Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.UpdateBanner">
+            <Setter Property="Background" Value="#2196F3" />
+        </Style>
+        <Style Selector="Button.UpdateBanner:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#42A5F5" />
+        </Style>
+        <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#AAAAAA" />
+        </Style>
+    </Window.Styles>
 
 
     <Grid RowDefinitions="Auto, Auto, *" Margin="10">
         <Button Grid.Row="0" 
-                    Classes="UpdateBanner"
-                    Command="{Binding OpenUpdateUrl}"
-                    IsVisible="{Binding IsUpdateAvailable}"
-                    HorizontalAlignment="Stretch"
-                    Margin="0,0,0,10">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <PathIcon Width="18" Height="18" VerticalAlignment="Center"
-                        Data="M11,2V13L7.5,9.5L6.08,10.92L12,16.84L17.92,10.92L16.5,9.5L13,13V2H11M4,18V20H20V18H4Z" 
-                        Foreground="White"/>
-                    <TextBlock Text="{Binding LatestVersionText}" 
-                            VerticalAlignment="Center" 
-                            FontWeight="Bold"/>
-                </StackPanel>
-            </Button>
+                Classes="UpdateBanner"
+                Command="{Binding OpenUpdateUrl}"
+                IsVisible="{Binding IsUpdateAvailable}"
+                HorizontalAlignment="Stretch"
+                Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <PathIcon Width="18" Height="18" VerticalAlignment="Center"
+                          Data="M11,2V13L7.5,9.5L6.08,10.92L12,16.84L17.92,10.92L16.5,9.5L13,13V2H11M4,18V20H20V18H4Z" 
+                          Foreground="White"/>
+                <TextBlock Text="{Binding LatestVersionText}" 
+                           VerticalAlignment="Center" 
+                           FontWeight="Bold" Margin="10,0,0,0"/>
+            </StackPanel>
+        </Button>
+
         <Border Grid.Row="1" Background="#2D2D2D" CornerRadius="5" Padding="10" Margin="0,0,0,10">
             <DockPanel LastChildFill="False">
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="20">
+                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="15">
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Text="Your PC IP:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBlock Text="PC IP:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
                         <TextBlock Text="{Binding LocalIpAddress}" Foreground="SpringGreen" FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
                 
+                    <Separator Width="1" Height="20" Background="#444444"/>
+
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Text="Port:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding UdpPort, UpdateSourceTrigger=LostFocus}" Width="60" VerticalContentAlignment="Center"/>
+                        <TextBlock Text="Video Port:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding UdpVideoPort, UpdateSourceTrigger=LostFocus}" Width="60" VerticalContentAlignment="Center"/>
+                    </StackPanel>
+
+                    <Separator Width="1" Height="20" Background="#444444"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <CheckBox IsChecked="{Binding IsAudioEnabled}" Content="Audio" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" Spacing="5" IsEnabled="{Binding IsAudioEnabled}">
+                            <TextBlock Text="Port:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                            <TextBox Text="{Binding UdpAudioPort, UpdateSourceTrigger=LostFocus}" Width="60" VerticalContentAlignment="Center"/>
+                        </StackPanel>
                     </StackPanel>
 
                     <Separator Width="1" Height="20" Background="#444444"/>
@@ -71,28 +86,28 @@
                         <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" FontSize="12"/>
                     </StackPanel>
                 </StackPanel>
+
                 <Button DockPanel.Dock="Right" Command="{Binding ShowHelpCommand}">
                     <StackPanel Orientation="Horizontal" Spacing="5">
                         <PathIcon Width="14" Height="14" VerticalAlignment="Center"
-                            Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,17A1.5,1.5 0 0,1 10.5,15.5A1.5,1.5 0 0,1 12,14A1.5,1.5 0 0,1 13.5,15.5A1.5,1.5 0 0,1 12,17M12,7C13.93,7 15.5,8.57 15.5,10.5C15.5,11.63 14.81,12.6 13.81,13C13.31,13.25 13,13.62 13,14H11V13.88C11,13.12 11.5,12.5 12.12,12.19C12.95,11.78 13.5,11.21 13.5,10.5A1.5,1.5 0 0,0 12,9A1.5,1.5 0 0,0 10.5,10.5H8.5C8.5,8.57 10.07,7 12,7Z" 
-                            Foreground="White"/>
+                                  Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,17A1.5,1.5 0 0,1 10.5,15.5A1.5,1.5 0 0,1 12,14A1.5,1.5 0 0,1 13.5,15.5A1.5,1.5 0 0,1 12,17M12,7C13.93,7 15.5,8.57 15.5,10.5C15.5,11.63 14.81,12.6 13.81,13C13.31,13.25 13,13.62 13,14H11V13.88C11,13.12 11.5,12.5 12.12,12.19C12.95,11.78 13.5,11.21 13.5,10.5A1.5,1.5 0 0,0 12,9A1.5,1.5 0 0,0 10.5,10.5H8.5C8.5,8.57 10.07,7 12,7Z" 
+                                  Foreground="White"/>
                         <TextBlock Text="Help" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </DockPanel>
         </Border>
 
-    <Border Grid.Row="2" Background="Black" CornerRadius="5" ClipToBounds="True">
-        <Viewbox Stretch="Uniform" 
-                 VerticalAlignment="Center" 
-                 HorizontalAlignment="Center">
-            
-            <Image x:Name="C64Display" 
-                   Source="{Binding ScreenBitmap}" 
-                   Width="384" Height="272" 
-                   RenderOptions.BitmapInterpolationMode="None" />
-        </Viewbox>
-    </Border>
-    
-</Grid>
+        <Border Grid.Row="2" Background="Black" CornerRadius="5" ClipToBounds="True">
+            <Viewbox Stretch="Uniform" 
+                     VerticalAlignment="Center" 
+                     HorizontalAlignment="Center">
+                
+                <Image x:Name="C64Display" 
+                        Source="{Binding ScreenBitmap}" 
+                        Width="384" Height="272" 
+                        RenderOptions.BitmapInterpolationMode="None" />
+            </Viewbox>
+        </Border>
+    </Grid>
 </Window>

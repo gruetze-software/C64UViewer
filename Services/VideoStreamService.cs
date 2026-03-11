@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace C64UViewer.Services;
 
-public class U64StreamService
+public class VideoStreamService
 {
     private UdpClient? _udpClient;
 

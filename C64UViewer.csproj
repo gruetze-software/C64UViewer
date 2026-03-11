@@ -3,7 +3,7 @@
     <ValidateExecutableReferencesRuntimeRequired>false</ValidateExecutableReferencesRuntimeRequired>
     <NoWarn>$(NoWarn);NETSDK1206</NoWarn>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <RuntimeIdentifiers>linux-x64;win-x64</RuntimeIdentifiers>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -12,15 +12,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <AssemblyName>c64uviewer</AssemblyName>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
     <Authors>Grütze-Software</Authors>
     <Product>C64U Slim-Viewer</Product>
     <PackageIcon>icon.png</PackageIcon>
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
-    <Description>Videostream-Viewer for Commodore 64 Ultimate in .NET 8.0</Description>
+    <Description>Videostream-Viewer for Commodore 64 Ultimate in .NET 9.0</Description>
     <Copyright>Copyright © 2026 Grütze-Software</Copyright>
     <Maintainer>schaefer.christoph@posteo.de</Maintainer>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

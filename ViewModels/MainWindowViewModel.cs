@@ -23,13 +23,15 @@ public partial class MainWindowViewModel : ViewModelBase
     public string StatusColor => IsStreaming ? "SpringGreen" : "Red";
     private DateTime _lastDataReceived = DateTime.MinValue;
     private bool _isDirty = false;
-    private readonly U64StreamService _streamService = new();
-    
+    private readonly VideoStreamService _streamVideoService = new();
+    private readonly AudioStreamService _streamAudioService = new();
     [ObservableProperty] private WriteableBitmap _screenBitmap = new(new PixelSize(384, 272), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
     [ObservableProperty] private string _localIpAddress = "";
     [ObservableProperty] private string _statusMessage = "Waiting for UDP data (Start VIC Stream on C64U)...";
     [ObservableProperty] private bool _isStreaming = false;
-    [ObservableProperty] private int _udpPort = 11000;
+    [ObservableProperty] private int _udpVideoPort = 11000;
+    [ObservableProperty] private int _udpAudioPort = 11001;
+    [ObservableProperty] private bool _isAudioEnabled = false;
     
     [ObservableProperty]
     private bool _isUpdateAvailable;
@@ -52,11 +54,13 @@ public partial class MainWindowViewModel : ViewModelBase
         // 2. Initialisierung
         ClearScreen();
         var settings = AppSettings.Load(); 
-        UdpPort = settings.UdpPort;
+        UdpVideoPort = settings.UdpPort;
+        UdpAudioPort = settings.UdpAudioPort;
+        IsAudioEnabled = settings.IsAudioEnabled;
         LocalIpAddress = GetLocalIpAddress();
         
         // 3. UDP-Event verknüpfen
-        _streamService.OnRawFrameReceived += ProcessUdpPacket;
+        _streamVideoService.OnRawFrameReceived += ProcessUdpPacket;
         
         // 4. DATEN-MOTOR (60 FPS Refresh)
         Trace.WriteLine("Starte UI-Refresh Timer (60 FPS)..."); 
@@ -108,7 +112,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     // Diese Methode wird vom Toolkit AUTOMATISCH generiert und aufgerufen,
     // sobald UdpPort (über das UI oder Code) geändert wird.
-    partial void OnUdpPortChanged(int value)
+    partial void OnUdpVideoPortChanged(int value)
     {
             // 1. Erstmal den Stream als inaktiv setzen
         IsStreaming = false;
@@ -122,7 +126,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         SaveCurrentSettings();
-        Trace.WriteLine($"Wechsle UDP-Lauscher auf neuen Port {value}...");
+        Trace.WriteLine($"Wechsle UDP-Video-Lauscher auf neuen Port {value}...");
         
         // 3. Den neuen Port initialisieren
         RestartUdpListener();
@@ -131,17 +135,24 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void RestartUdpListener()
     {
-        if (UdpPort < 1024 || UdpPort > 65535)
+        if (UdpVideoPort < 1024 || UdpVideoPort > 65535)
         {
-            StatusMessage = "Invalid Port (1024-65535)";
+            StatusMessage = "Invalid UDP Video Port (1024-65535)";
             OnPropertyChanged(nameof(StatusColor)); // Erzwingt Rot
             return;
         }
 
-        Trace.WriteLine($"Starte UDP-Lauscher auf Port {UdpPort}...");
+        if (UdpAudioPort < 1024 || UdpAudioPort > 65535)
+        {
+            StatusMessage = "Invalid UDP Audio Port (1024-65535)";
+            OnPropertyChanged(nameof(StatusColor)); // Erzwingt Rot
+            return;
+        }
+
+        Trace.WriteLine($"Starte UDP-Video-Lauscher auf Port {UdpVideoPort}...");
         try
         {
-            _streamService.InitializeAndListen(UdpPort);
+            _streamVideoService.InitializeAndListen(UdpVideoPort);
         }
         catch (Exception ex)
         {
@@ -149,6 +160,22 @@ public partial class MainWindowViewModel : ViewModelBase
             StatusMessage = "Port Error: " + ex.Message;
             IsStreaming = false;
             OnPropertyChanged(nameof(StatusColor)); // Sicherstellen, dass es Rot bleibt
+        }
+
+        if ( IsAudioEnabled )
+        {
+            Trace.WriteLine($"Starte UDP-Audio-Lauscher auf Port {UdpAudioPort}...");
+            try
+            {
+                _streamAudioService.InitializeAndListen(UdpAudioPort);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Fehler beim Starten des UDP-Audio-Listeners: {ex.Message}");
+                StatusMessage = "Port Error: " + ex.Message;
+                IsStreaming = false;
+                OnPropertyChanged(nameof(StatusColor)); // Sicherstellen, dass es Rot bleibt
+            }
         }
     }
 
@@ -182,9 +209,11 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void SaveCurrentSettings()
     {
-        Trace.WriteLine($"Speichere Einstellungen: UDP Port = {UdpPort}");
+        Trace.WriteLine($"Speichere Einstellungen...");
         var settings = new AppSettings();
-        settings.UdpPort = UdpPort;
+        settings.UdpPort = UdpVideoPort;
+        settings.UdpAudioPort = UdpAudioPort;
+        settings.IsAudioEnabled = IsAudioEnabled;
         settings.Save();
     }
 
@@ -255,5 +284,14 @@ public partial class MainWindowViewModel : ViewModelBase
         _isDirty = true;
 
         
+    }
+
+    public void OnExit()
+    {
+        // Stoppt den UDP-Listener und den SDL2-Player
+        _streamAudioService.Stop();
+        
+        // Player direkt disposen:
+        _streamAudioService.Dispose(); 
     }
 }
