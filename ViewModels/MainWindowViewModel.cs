@@ -32,6 +32,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private int _udpVideoPort = 11000;
     [ObservableProperty] private int _udpAudioPort = 11001;
     [ObservableProperty] private bool _isAudioEnabled = false;
+    [ObservableProperty] private bool _isAudioAvailable = true; // Wir gehen erstmal davon aus, dass Audio verfügbar ist, bis wir das Gegenteil feststellen
     
     [ObservableProperty]
     private bool _isUpdateAvailable;
@@ -103,6 +104,8 @@ public partial class MainWindowViewModel : ViewModelBase
             return true;
         }, TimeSpan.FromSeconds(1));
 
+        _isAudioAvailable = CheckAudioAvailability();
+        
         // 6. SOFORT LAUSCHEN 
         RestartUdpListener();
 
@@ -284,6 +287,29 @@ public partial class MainWindowViewModel : ViewModelBase
         _isDirty = true;
 
         
+    }
+
+    private bool CheckAudioAvailability()
+    {
+        try
+        {
+            // Wir rufen eine harmlose SDL-Funktion auf, um das Laden zu erzwingen
+            SDL2.SDL.SDL_GetVersion(out _);
+            return true;
+        }
+        catch (DllNotFoundException)
+        {
+            // Die Bibliothek fehlt auf dem System
+            StatusMessage = "Warning: SDL2 library not found. Audio disabled.";
+             OnPropertyChanged(nameof(StatusColor)); // Erzwingt Rot
+            return false;
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Audio Error: {ex.Message}";
+             OnPropertyChanged(nameof(StatusColor)); // Erzwingt Rot
+            return false;
+        }
     }
 
     public void OnExit()

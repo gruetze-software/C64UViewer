@@ -79,6 +79,11 @@
                         </StackPanel>
                     </StackPanel>
 
+                    <StackPanel Orientation="Vertical" Spacing="5" IsVisible="{Binding !IsAudioAvailable}">
+                        <TextBlock Text="⚠️ SDL2 missing! Run 'brew install sdl2' (Mac) or check SDL2.dll (Win)." 
+                            Foreground="Orange" FontSize="10" TextWrapping="Wrap" MaxWidth="200"/>
+                    </StackPanel>
+
                     <Separator Width="1" Height="20" Background="#444444"/>
 
                     <StackPanel Orientation="Horizontal" Spacing="10">
