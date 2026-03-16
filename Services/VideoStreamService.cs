@@ -16,7 +16,15 @@ public class VideoStreamService
 
     public void InitializeAndListen(int port)
     {
-        if (_udpClient != null) return;
+        Trace.WriteLine($"VideoStreamService:InitializeAndListen, Port {port}");
+        // Alten Client schließen, falls vorhanden
+        if (_udpClient != null) 
+        {
+            _udpClient.Close();
+            _udpClient = null;
+            Trace.WriteLine("--> Video-UDP-Client geschlossen.");
+
+        }
 
         _udpClient = new UdpClient();
         _udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -37,6 +45,17 @@ public class VideoStreamService
             }
             catch { /* Port geschlossen oder Fehler */ }
         });
+    }
+
+    public void Stop()
+    {
+        if (_udpClient != null)
+        {
+            _udpClient.Close();
+            _udpClient.Dispose();
+            _udpClient = null;
+            Trace.WriteLine("Video-UDP-Listener gestoppt.");
+        }
     }
    
 }

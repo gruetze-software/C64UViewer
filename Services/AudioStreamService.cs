@@ -8,16 +8,18 @@ using System.Threading.Tasks;
 
 namespace C64UViewer.Services;
 
-public class AudioStreamService
+public class AudioStreamService : IDisposable
 {
     private UdpClient? _udpClient;
     private CancellationTokenSource? _cts;
     private readonly CrossPlatformAudioPlayer _audioPlayer = new();
     private bool _isInitialized = false;
 
+    // EVENT: Wird gefeuert, sobald IRGENDEIN Audio-Paket ankommt (für die Status-LED)
+    public event Action<byte[]>? OnAudioPacketReceived;
+
     public void InitializeAndListen(int port)
     {
-        // Falls schon ein Listener läuft, stoppen wir ihn erst
         Stop();
 
         if (!_isInitialized)
@@ -34,7 +36,6 @@ public class AudioStreamService
             try
             {
                 _udpClient = new UdpClient();
-                // Port-Sharing erlauben, falls andere Tools mitlauschen wollen
                 _udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, port));
 
@@ -42,19 +43,11 @@ public class AudioStreamService
 
                 while (!token.IsCancellationRequested)
                 {
+                    // Wir warten auf Pakete
                     var result = await _udpClient.ReceiveAsync(token);
                     
-                    // Ultimate 64 Audio-Pakete validieren
-                    // Header ist meist 12 Bytes, Daten folgen
-                    if (result.Buffer.Length > 12)
-                    {
-                        // Wir überspringen den 12-Byte Header und senden nur die PCM-Daten
-                        // Format: 48kHz, 16-Bit, Stereo
-                        byte[] pcmData = new byte[result.Buffer.Length - 12];
-                        Buffer.BlockCopy(result.Buffer, 12, pcmData, 0, pcmData.Length);
-                        
-                        _audioPlayer.EnqueueSamples(pcmData);
-                    }
+                    // 1. Event feuern: Das ViewModel registriert das und setzt '_lastAudioReceived'
+                    OnAudioPacketReceived?.Invoke(result.Buffer);
                 }
             }
             catch (OperationCanceledException) { /* Normaler Stopp */ }
@@ -70,19 +63,45 @@ public class AudioStreamService
         }, token);
     }
 
+    /// <summary>
+    /// Verarbeitet die Rohdaten der Ultimate 64 und schiebt sie in den SDL-Puffer.
+    /// Wird vom ViewModel aufgerufen, wenn Audio aktiviert ist.
+    /// </summary>
+    public void PushAudioData(byte[] rawData)
+    {
+        try
+        {
+            // Ultimate 64 Audio-Pakete validieren
+            // Der Header ist 12 Bytes lang, dahinter liegen die PCM-Daten
+            if (rawData != null && rawData.Length > 12)
+            {
+                // Header überspringen (Format der U64: 48kHz, 16-Bit, Stereo)
+                int payloadLength = rawData.Length - 12;
+                byte[] pcmData = new byte[payloadLength];
+                Buffer.BlockCopy(rawData, 12, pcmData, 0, payloadLength);
+                
+                // Ab in den CrossPlatformAudioPlayer (SDL2 Queue)
+                _audioPlayer.EnqueueSamples(pcmData);
+            }
+        }
+        catch (Exception ex)
+        {
+            Trace.WriteLine($"Fehler beim Verarbeiten der Audiodaten: {ex.Message}");
+        }
+    }
+
     public void Stop()
     {
         _cts?.Cancel();
         _cts?.Dispose();
         _cts = null;
         
-        // Den Hardware-Puffer leeren, damit beim nächsten Start kein "Rest-Sound" kommt
         _audioPlayer.ClearBuffer(); 
     }
 
     public void Dispose()
     {
         Stop();
-        _audioPlayer.Dispose(); // Ruft SDL_Quit() auf
+        _audioPlayer.Dispose();
     }
 }
