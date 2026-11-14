@@ -1,0 +1,21 @@
+app-id: de.gruetze_software.C64UViewer
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: c64uviewer
+finish-args:
+  - --share=network
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=dri
+modules:
+  - name: c64uviewer
+    only-arches: [x86_64]
+    buildsystem: simple
+    build-commands:
+      - cp -a bin lib share /app/
+    sources:
+      - type: dir
+        path: ../artifacts/linux-payload

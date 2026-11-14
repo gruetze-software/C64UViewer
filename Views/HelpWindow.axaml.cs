@@ -16,7 +16,7 @@ public partial class HelpWindow : Window
 
     public void LinkClick(object sender, RoutedEventArgs e)
 {
-    var url = "https://github.com/gruetze-software"; // Hier deine URL rein!
+    var url = "https://github.com/gruetze-software/C64UViewer#readme";
     
     try
     {

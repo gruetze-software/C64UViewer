@@ -1,0 +1,48 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="C64UViewer.Views.AboutWindow" Title="About C64U Slim-Viewer"
+        Icon="/Assets/icon.ico" Width="600" Height="630" CanResize="False"
+        ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource AboutBackground}">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light"><SolidColorBrush x:Key="AboutBackground" Color="#F4F6F7"/></ResourceDictionary>
+                <ResourceDictionary x:Key="Dark"><SolidColorBrush x:Key="AboutBackground" Color="#151C21"/></ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid RowDefinitions="*,Auto" Margin="28">
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="12" Margin="22,0,22,4">
+                <Image Source="/Assets/icon.png" Width="96" Height="96" RenderOptions.BitmapInterpolationMode="HighQuality"/>
+                <TextBlock Text="C64U Slim-Viewer" FontSize="28" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="VersionLabel" HorizontalAlignment="Center" FontSize="15"/>
+                <TextBlock Text="Live video and audio from the Commodore 64 Ultimate." TextAlignment="Center" TextWrapping="Wrap" Opacity="0.8"/>
+                <Separator Margin="0,6"/>
+                <Grid ColumnDefinitions="100,*" Margin="12,0">
+                    <Image Source="/Assets/gruetze-software.png" Width="88" Height="88"/>
+                    <StackPanel Grid.Column="1" Spacing="5" VerticalAlignment="Center" Margin="12,0,0,0">
+                        <TextBlock Text="Developed by" FontSize="12" Opacity="0.7"/>
+                        <TextBlock Text="Grütze-Software" FontSize="19" FontWeight="SemiBold"/>
+                        <TextBlock Text="© 2026 Grütze-Software" FontSize="12"/>
+                    </StackPanel>
+                </Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,6">
+                    <Button Content="GitHub / Stream setup" Tag="https://github.com/gruetze-software/C64UViewer#readme" Click="OpenLink"/>
+                    <Button Content="Grütze-Software" Tag="https://github.com/gruetze-software" Click="OpenLink"/>
+                </StackPanel>
+                <Separator/>
+                <TextBlock Text="Support development" TextAlignment="Center"/>
+                <Button Content="☕  Support on Ko-fi" Tag="https://ko-fi.com/gruetzesoftware" Click="OpenLink"
+                        Background="#FF5E5B" Foreground="#151C21" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <Separator/>
+                <TextBlock Text="C# · .NET 10 · Avalonia · MIT License" FontSize="12" TextAlignment="Center"/>
+                <TextBlock x:Name="LinkStatus" TextWrapping="Wrap" FontSize="12" IsVisible="False"/>
+            </StackPanel>
+        </ScrollViewer>
+        <Button Grid.Row="1" Content="Close" IsDefault="True" IsCancel="True"
+                HorizontalAlignment="Center" HorizontalContentAlignment="Center"
+                MinWidth="120" Margin="0,16,0,0" Click="CloseDialog"/>
+    </Grid>
+</Window>

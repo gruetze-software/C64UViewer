@@ -9,6 +9,10 @@ public class AppSettings
     public int UdpPort { get; set; } = 11000;
     public int UdpAudioPort { get; set; } = 11001;
     public bool IsAudioEnabled { get; set; } = false;
+    public bool ScanlinesEnabled { get; set; }
+    public int ScanlineStrength { get; set; } = 30;
+    public bool GlowEnabled { get; set; }
+    public int GlowStrength { get; set; } = 25;
     
     public static string FilePath
     {
@@ -31,8 +35,14 @@ public class AppSettings
 
     public static AppSettings Load()
     {
-        if (!File.Exists(FilePath)) return new AppSettings();
-        try { return JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(FilePath)) ?? new AppSettings(); }
+
+        try
+        {
+            var path = FilePath;
+            return File.Exists(path)
+                ? JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path)) ?? new AppSettings()
+                : new AppSettings();
+        }
         catch { return new AppSettings(); }
     }
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>de.gruetze_software.C64UViewer</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>C64U Slim-Viewer</name>
+  <summary>Stream video and audio from a Commodore 64 Ultimate</summary>
+  <description>
+    <p>Watch live VIC video and listen to audio streamed by a Commodore 64 Ultimate over the local network. Adjust scanlines and glow to reproduce the look of a CRT display.</p>
+  </description>
+  <developer id="de.gruetze_software"><name>Grütze-Software</name></developer>
+  <launchable type="desktop-id">de.gruetze_software.C64UViewer.desktop</launchable>
+  <url type="homepage">https://github.com/gruetze-software/C64UViewer</url>
+  <url type="bugtracker">https://github.com/gruetze-software/C64UViewer/issues</url>
+  <content_rating type="oars-1.1"/>
+</component>

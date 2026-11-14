@@ -17,10 +17,9 @@ public class CrossPlatformAudioPlayer : IDisposable
         if (_isInitialized) return;
 
         // SDL2 initialisieren
-        if (SDL_Init(SDL_INIT_AUDIO) < 0)
+        if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0)
         {
-            Trace.WriteLine($"SDL konnte nicht initialisiert werden: {SDL_GetError()}");
-            return;
+            throw new InvalidOperationException($"SDL audio initialization failed: {SDL_GetError()}");
         }
 
         // Ultimate 64 Audio-Spezifikation: 48kHz, 16-Bit Signed, Stereo
@@ -33,12 +32,13 @@ public class CrossPlatformAudioPlayer : IDisposable
         };
 
         // Audiogerät öffnen (null = Standardgerät)
-        _deviceId = SDL_OpenAudioDevice(string.Empty, 0, ref _wantedSpec, out _, 0);
+        _deviceId = SDL_OpenAudioDevice(IntPtr.Zero, 0, ref _wantedSpec, out _, 0);
         
         if (_deviceId == 0)
         {
-            Trace.WriteLine($"Audiogerät konnte nicht geöffnet werden: {SDL_GetError()}");
-            return;
+            var error = SDL_GetError();
+            SDL_QuitSubSystem(SDL_INIT_AUDIO);
+            throw new InvalidOperationException($"SDL could not open the default playback device: {error}");
         }
 
         // Wiedergabe entpausieren (SDL startet standardmäßig pausiert)
@@ -46,7 +46,7 @@ public class CrossPlatformAudioPlayer : IDisposable
         _isInitialized = true;
     }
 
-    public void EnqueueSamples(byte[] pcmData)
+    public void EnqueueSamples(ReadOnlySpan<byte> pcmData)
     {
         if (!_isInitialized || _deviceId == 0 || pcmData.Length == 0) return;
 
@@ -81,7 +81,7 @@ public class CrossPlatformAudioPlayer : IDisposable
         if (_isInitialized)
         {
             SDL_CloseAudioDevice(_deviceId);
-            SDL_Quit();
+            SDL_QuitSubSystem(SDL_INIT_AUDIO);
             _isInitialized = false;
         }
     }

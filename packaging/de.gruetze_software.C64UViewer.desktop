@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=C64U Slim-Viewer
+Comment=Stream video and audio from a Commodore 64 Ultimate
+Exec=c64uviewer
+Icon=de.gruetze_software.C64UViewer
+StartupWMClass=de.gruetze_software.C64UViewer
+Terminal=false
+Categories=AudioVideo;Video;

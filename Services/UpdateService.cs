@@ -2,49 +2,48 @@ using System;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
-public class UpdateService(string currentVersion)
+namespace C64UViewer.Services;
+
+internal static class UpdateService
 {
     private const string VersionUrl = "https://api.github.com/repos/gruetze-software/C64UViewer/releases/latest";
-    private readonly string _currentVersion = currentVersion; // Deine aktuelle Version
 
-    public async Task<(bool UpdateAvailable, string DownloadUrl, string VersionTag)> CheckForUpdates()
+    public static async Task<(bool Available, string Url, string Tag)> CheckForUpdatesAsync(
+        Version currentVersion, CancellationToken cancellationToken)
     {
-        Trace.WriteLine("Checking for updates...");
-
-        // Test
-        //return (true, "https://www.google.com", "v9.9.9");
-
-        using var client = new HttpClient();
-        // GitHub verlangt zwingend einen User-Agent Header
+        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
         client.DefaultRequestHeaders.UserAgent.ParseAdd("C64UViewer-Updater");
 
         try
         {
-            var release = await client.GetFromJsonAsync<GitHubRelease>(VersionUrl);
-            if (release != null 
-                && Version.TryParse(release.TagName.TrimStart('v', ' '), out var latestVersion) 
-                && Version.TryParse(_currentVersion, out var currentVersion))
+            var release = await client.GetFromJsonAsync<GitHubRelease>(VersionUrl, cancellationToken);
+            if (release?.TagName is string tag
+                && Version.TryParse(tag.Trim().TrimStart('v', 'V'), out var latest)
+                && Normalize(latest) > Normalize(currentVersion)
+                && Uri.TryCreate(release.HtmlUrl, UriKind.Absolute, out var url)
+                && url.Scheme == Uri.UriSchemeHttps && url.Host == "github.com")
             {
-                if (latestVersion > currentVersion)
-                {
-                    return (true, release.HtmlUrl, release.TagName);
-                }
+                return (true, url.AbsoluteUri, tag);
             }
         }
-        catch (Exception Ex)
+        catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or JsonException)
         {
-            // Fehlerbehandlung (z.B. Logging) kann hier hinzugefügt werden
-            Trace.WriteLine($"Fehler bei der Update-Prüfung: {Ex.Message}");
+            if (!cancellationToken.IsCancellationRequested)
+                Trace.WriteLine($"Update check failed: {ex.Message}");
         }
-        
+
         return (false, string.Empty, string.Empty);
     }
-}
 
-public record GitHubRelease(
-    [property: JsonPropertyName("tag_name")] string TagName,
-    [property: JsonPropertyName("html_url")] string HtmlUrl
-);
+    private static Version Normalize(Version version) =>
+        new(version.Major, version.Minor, Math.Max(0, version.Build), Math.Max(0, version.Revision));
+
+    private sealed record GitHubRelease(
+        [property: JsonPropertyName("tag_name")] string? TagName,
+        [property: JsonPropertyName("html_url")] string? HtmlUrl);
+}

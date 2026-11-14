@@ -35,7 +35,7 @@ Version: $VERSION
 Architecture: amd64
 Maintainer: Gruetze-Software
 Depends: libsdl2-2.0-0
-Description: Small Video/Audio-Stream-Viewer for Commodore 64 Ultimate in .NET 9.0
+Description: Small video and audio stream viewer for Commodore 64 Ultimate in .NET 10
 " > $BUILD_ROOT/DEBIAN/control
 
 # 6. Debian Paket bauen

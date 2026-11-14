@@ -2,7 +2,31 @@
 [![Platform: Linux | Windows](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue)](#)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](#)
 
-A lightweight, high-performance video viewer for the Ultimate 64 (U64) and C64 Ultimate. This tool utilizes the hardware's built-in VIC-stream to display your C64 screen directly on your PC with minimal latency—no capture card required. Built with .NET 8 and Avalonia UI.
+A lightweight video and audio stream viewer for the Ultimate 64 (U64) and C64 Ultimate. Built with .NET 10 and Avalonia UI.
+
+On Linux, the viewer tries native Wayland and falls back to X11. Set
+`C64UVIEWER_LINUX_BACKEND=x11` or `C64UVIEWER_LINUX_BACKEND=wayland`
+to select a specific backend.
+
+### Build local Flatpak and Snap packages
+
+Run these commands from the repository root on Linux x86-64 with the .NET 10 SDK.
+
+```sh
+bash packaging/prepare-linux.sh
+
+# Flatpak (requires flatpak-builder and the Flathub remote).
+flatpak-builder --user --install --install-deps-from=flathub --force-clean artifacts/flatpak-build flatpak/de.gruetze_software.C64UViewer.yaml
+flatpak run de.gruetze_software.C64UViewer
+
+# Snap (requires Snapcraft).
+snapcraft
+sudo snap install --dangerous ./c64uviewer_1.3.0_amd64.snap
+```
+
+The Flatpak manifest consumes a local publish directory. A Flathub submission
+still needs pinned build sources and offline NuGet inputs. During testing, verify
+video on UDP 11000 and audio on UDP 11001 on both a Wayland and an X11 session.
 
 <img width="864" height="682" alt="grafik" src="https://github.com/user-attachments/assets/28e98855-bf88-4be1-96b0-f32d154cf99f" />
 

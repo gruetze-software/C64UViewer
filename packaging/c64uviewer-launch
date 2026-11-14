@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+root=${SNAP:-$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)}
+exec "$root/lib/c64uviewer/c64uviewer" "$@"

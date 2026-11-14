@@ -1,0 +1,39 @@
+name: c64uviewer
+title: C64U Slim-Viewer
+base: core24
+adopt-info: viewer
+grade: stable
+confinement: strict
+license: MIT
+summary: Stream video and audio from a Commodore 64 Ultimate
+description: |
+  Watch the live VIC video and listen to audio sent by your Commodore 64
+  Ultimate over the local network. Includes adjustable CRT scanlines and glow.
+icon: Assets/icon.png
+source-code: https://github.com/gruetze-software/C64UViewer
+issues: https://github.com/gruetze-software/C64UViewer/issues
+platforms:
+  amd64:
+
+apps:
+  c64uviewer:
+    command: bin/c64uviewer
+    desktop: share/applications/de.gruetze_software.C64UViewer.desktop
+    extensions: [gnome]
+    plugs: [network, network-bind, audio-playback]
+
+parts:
+  viewer:
+    plugin: dump
+    source: artifacts/linux-payload
+    override-build: |
+      craftctl default
+      craftctl set version="$(cat "$CRAFT_PART_SRC/VERSION")"
+      rm "$CRAFT_PART_INSTALL/VERSION"
+      sed -i 's|^Icon=.*|Icon=${SNAP}/share/icons/hicolor/256x256/apps/de.gruetze_software.C64UViewer.png|' "$CRAFT_PART_INSTALL/share/applications/de.gruetze_software.C64UViewer.desktop"
+    stage-packages:
+      - libsdl2-2.0-0
+      - libicu74
+      - libssl3t64
+      - libice6
+      - libsm6

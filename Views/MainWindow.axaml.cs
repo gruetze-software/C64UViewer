@@ -1,30 +1,45 @@
 using System;
-using System.Diagnostics;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Threading;
 using C64UViewer.ViewModels;
 
 namespace C64UViewer.Views;
 
-
 public partial class MainWindow : Window
 {
+    private async void InfoClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+            await new AboutWindow(viewModel.DisplayVersion).ShowDialog(this);
+    }
+
+    private async void CrtClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+            await new CrtSettingsWindow(viewModel).ShowDialog(this);
+    }
+    private readonly DispatcherTimer _renderTimer = new() { Interval = TimeSpan.FromMilliseconds(16) };
+
     public MainWindow()
     {
-       InitializeComponent();
-
-        // Wir starten einen Timer direkt in der View, 
-        // der das Image-Control zum Neuzeichnen zwingt.
-        DispatcherTimer.Run(() =>
+        InitializeComponent();
+        _renderTimer.Tick += (_, _) =>
         {
-            var image = this.FindControl<Image>("C64Display");
-            if (image != null)
+            if (DataContext is MainWindowViewModel viewModel && viewModel.PresentFrame())
             {
-                // Dies erzwingt, dass die Grafikkarte den aktuellen 
-                // Inhalt des WriteableBitmaps neu ausliest.
-                image.InvalidateVisual();
+                C64Display.InvalidateVisual();
+                if (viewModel.GlowOpacity > 0)
+                    GlowDisplay.InvalidateVisual();
             }
-            return true;
-        }, TimeSpan.FromMilliseconds(16)); // Synchron zu deinen 60 FPS
+        };
+        Opened += (_, _) =>
+        {
+            if (DataContext is MainWindowViewModel viewModel)
+                viewModel.Start();
+
+            _renderTimer.Start();
+        };
+        Closed += (_, _) => _renderTimer.Stop();
     }
 }
