@@ -25,14 +25,15 @@ sealed class Program
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
-        const string appId = "de.gruetze_software.C64UViewer";
         var builder = AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .WithInterFont()
             .LogToTrace();
 
+#if !DISABLE_NATIVE_WAYLAND
         if (OperatingSystem.IsLinux())
         {
+            const string appId = "de.gruetze_software.C64UViewer";
             builder.With(new X11PlatformOptions { WmClass = appId })
                 .With(new WaylandPlatformOptions { AppId = appId });
             switch (Environment.GetEnvironmentVariable("C64UVIEWER_LINUX_BACKEND")?.Trim().ToLowerInvariant())
@@ -47,6 +48,7 @@ sealed class Program
                     break;
             }
         }
+#endif
 
         return builder;
     }

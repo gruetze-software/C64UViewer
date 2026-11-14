@@ -1,4 +1,7 @@
 #!/bin/sh
 set -eu
 root=${SNAP:-$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)}
+if [ -n "${SNAP:-}" ]; then
+    export DOTNET_BUNDLE_EXTRACT_BASE_DIR="${SNAP_USER_COMMON}/dotnet"
+fi
 exec "$root/lib/c64uviewer/c64uviewer" "$@"

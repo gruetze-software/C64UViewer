@@ -1,2 +1,3 @@
 packaging/prepare-linux.sh text eol=lf
 packaging/c64uviewer-launch text eol=lf
+build.sh text eol=lf

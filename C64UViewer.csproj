@@ -10,11 +10,22 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <CopyOutputSymbolsToPublishDirectory>false</CopyOutputSymbolsToPublishDirectory>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RuntimeIdentifier)' != '' And !$(RuntimeIdentifier.StartsWith('linux-'))">
+    <DisableNativeWayland>true</DisableNativeWayland>
+    <DefineConstants>$(DefineConstants);DISABLE_NATIVE_WAYLAND</DefineConstants>
+  </PropertyGroup>
+
   <PropertyGroup>
-    <Version>1.3.0</Version>
+    <Version>1.3.1</Version>
     <AssemblyName>c64uviewer</AssemblyName>
-    <AssemblyVersion>1.3.0</AssemblyVersion>
-    <FileVersion>1.3.0</FileVersion>
+    <AssemblyVersion>1.3.1</AssemblyVersion>
+    <FileVersion>1.3.1</FileVersion>
     <Authors>Grütze-Software</Authors>
     <Product>C64U Slim-Viewer</Product>
     <PackageIcon>icon.png</PackageIcon>
@@ -32,10 +43,10 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
-    <PackageReference Include="Avalonia.Wayland" Version="12.1.4" />
+    <PackageReference Include="Avalonia.Wayland" Version="12.1.4" Condition="'$(DisableNativeWayland)' != 'true'" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
-    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="Assets/icon.ico;Assets/icon.png;Assets/gruetze-software.png" />
     <Content Include="Assets/icon.png">
       <Pack>true</Pack>
       <PackagePath>usr/share/icons/hicolor/256x256/apps/c64uviewer.png</PackagePath>
@@ -43,9 +54,20 @@
     <Content Include="c64uviewer.desktop">
       <Pack>true</Pack>
       <PackagePath>usr/share/applications/c64uviewer.desktop</PackagePath>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="10.0.2" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' Or ('$(RuntimeIdentifier)' == '' And '$(NETCoreSdkRuntimeIdentifier)' == 'win-x64')">
+    <None Update="Libs/Win64/SDL2.dll" TargetPath="SDL2.dll"
+          CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"
+          ExcludeFromSingleFile="true" />
+  </ItemGroup>
+  <Target Name="RemoveReleasePublishSymbols" AfterTargets="ComputeResolvedFilesToPublishList"
+          Condition="'$(Configuration)' == 'Release'">
+    <ItemGroup>
+      <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+                             Condition="'%(ResolvedFileToPublish.Extension)' == '.pdb' Or '%(ResolvedFileToPublish.Extension)' == '.dbg'" />
+    </ItemGroup>
+  </Target>
 </Project>

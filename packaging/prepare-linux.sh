@@ -7,10 +7,11 @@ payload="$PWD/artifacts/linux-payload"
 publish="$(mktemp -d)"
 trap 'rm -rf "$publish"' EXIT
 
-dotnet publish C64UViewer.csproj -c Release -r linux-x64 --self-contained true -o "$publish"
+dotnet publish C64UViewer.csproj -c Release -r linux-x64 --self-contained true \
+    -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o "$publish"
 rm -rf -- "$payload"
 install -d "$payload/bin" "$payload/lib/c64uviewer"
-cp -a "$publish/." "$payload/lib/c64uviewer/"
+install -m 755 "$publish/c64uviewer" "$payload/lib/c64uviewer/c64uviewer"
 install -m 755 packaging/c64uviewer-launch "$payload/bin/c64uviewer"
 install -Dm644 "packaging/$app_id.desktop" "$payload/share/applications/$app_id.desktop"
 install -Dm644 "packaging/$app_id.metainfo.xml" "$payload/share/metainfo/$app_id.metainfo.xml"

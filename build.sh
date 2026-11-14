@@ -1,4 +1,6 @@
 #!/bin/bash
+set -euo pipefail
+cd "$(dirname "$0")"
 
 # 1. Konfiguration
 PROJ="C64UViewer.csproj"
@@ -22,7 +24,7 @@ echo "Kompiliere Linux Version (Self-Contained)..."
 dotnet publish $PROJ -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./dist/temp_publish
 
 # 3. Dateien kopieren
-cp -r ./dist/temp_publish/* $BUILD_ROOT/usr/share/$APP_NAME/
+install -m 755 "./dist/temp_publish/$APP_NAME" "$BUILD_ROOT/usr/share/$APP_NAME/"
 cp c64uviewer.desktop $BUILD_ROOT/usr/share/applications/
 cp Assets/icon.png $BUILD_ROOT/usr/share/icons/hicolor/256x256/apps/c64uviewer.png
 
@@ -43,22 +45,15 @@ Description: Small video and audio stream viewer for Commodore 64 Ultimate in .N
 mkdir -p dist/linux
 echo "Erstelle .deb Paket..."
 # Besitzer auf root setzen (simuliert System-Installation)
-sudo chown -R root:root $BUILD_ROOT
-dpkg-deb --build $BUILD_ROOT dist/linux/${APP_NAME}_${VERSION}_amd64.deb
+dpkg-deb --root-owner-group --build "$BUILD_ROOT" "dist/linux/${APP_NAME}_${VERSION}_amd64.deb"
 
 # 7. Windows Build
 echo "Baue Windows Version..."
-dotnet publish $PROJ -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true --output ./dist/windows
-# KOPIERE NATIVE DLL (WICHTIG!)
-if [ -f "Libs/Win64/SDL2.dll" ]; then
-    echo "Kopiere SDL2.dll in den Windows-Build-Ordner..."
-    cp Libs/Win64/SDL2.dll ./dist/windows/
-else
-    echo "WARNUNG: Libs/Win64/SDL2.dll nicht gefunden! Sound wird unter Windows nicht funktionieren."
-fi
+dotnet publish $PROJ -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./dist/temp_windows
+mkdir -p dist/windows
+cp "./dist/temp_windows/$APP_NAME.exe" ./dist/temp_windows/SDL2.dll dist/windows/
 
 # Rechte zurückgeben, damit rm -rf beim naechsten Mal wieder funktioniert
-sudo chown -R $USER:$USER dist/
 
 # 8. macOS Build (Apple Silicon / M1-M3)
 echo "Baue macOS (ARM64) App-Struktur..."
@@ -71,10 +66,10 @@ mkdir -p "$MACOS_BIN"
 mkdir -p "$RESOURCES"
 
 # Kompilieren für Apple Silicon (M1/M2/M3)
-dotnet publish $PROJ -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -p:BundleReadyToRun=true --output ./dist/temp_macos
+dotnet publish $PROJ -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./dist/temp_macos
 
 # Dateien in das App-Bundle verschieben
-cp -r ./dist/temp_macos/* "$MACOS_BIN/"
+install -m 755 "./dist/temp_macos/$APP_NAME" "$MACOS_BIN/"
 cp Assets/icon.png "$RESOURCES/icon.png"
 
 # 9. Die PList-Datei erstellen (Damit macOS weiß, was das für eine App ist)
@@ -136,7 +131,7 @@ cd dist/windows && zip -r "../../$RELEASE_DIR/${APP_NAME}_${VERSION}_windows_x64
 # Bei macOS gehört die ReadMe NICHT in das .app Bundle, sondern daneben ins ZIP
 echo "Zippe macOS Version..."
 cp dist/README_FIRST.txt dist/macos/
-cd dist/macos && zip -r "../../$RELEASE_DIR/${APP_NAME}_${VERSION}_macos_arm64.zip" "${APP_NAME^}Viewer.app" README_FIRST.txt && cd ../..
+cd dist/macos && zip -r "../../$RELEASE_DIR/${APP_NAME}_${VERSION}_macos_arm64.zip" "$(basename "$APP_BUNDLE")" README_FIRST.txt && cd ../..
 
 # C. Debian Paket kopieren
 cp dist/linux/*.deb "$RELEASE_DIR/"

@@ -3,6 +3,9 @@ runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 command: c64uviewer
+build-options:
+  no-debuginfo: true
+  no-strip: true
 finish-args:
   - --share=network
   - --share=ipc

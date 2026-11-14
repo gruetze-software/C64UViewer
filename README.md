@@ -21,7 +21,7 @@ flatpak run de.gruetze_software.C64UViewer
 
 # Snap (requires Snapcraft).
 snapcraft
-sudo snap install --dangerous ./c64uviewer_1.3.0_amd64.snap
+sudo snap install --dangerous ./c64uviewer_1.3.1_amd64.snap
 ```
 
 The Flatpak manifest consumes a local publish directory. A Flathub submission
