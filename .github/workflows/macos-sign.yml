@@ -1,0 +1,54 @@
+name: Sign and notarize macOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing stable release tag (for example v1.3.1)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  sign:
+    runs-on: macos-15
+    steps:
+      - name: Validate tag
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Expected a tag in vX.Y.Z format"; exit 1; }
+      - uses: actions/checkout@v5
+        with:
+          path: tooling
+          persist-credentials: false
+      - uses: actions/checkout@v5
+        with:
+          ref: refs/tags/${{ inputs.release_tag }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build macOS app
+        working-directory: source
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        run: bash ../tooling/packaging/build-macos.sh "$RELEASE_TAG" "$RUNNER_TEMP/macos-package"
+      - name: Sign and notarize macOS app
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          MACOS_CERTIFICATE_P12_BASE64: ${{ secrets.MACOS_CERTIFICATE_P12_BASE64 }}
+          MACOS_CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
+        run: bash tooling/packaging/sign-macos.sh "$RELEASE_TAG" "$RUNNER_TEMP/macos-package"
+      - uses: actions/upload-artifact@v6
+        with:
+          name: c64uviewer-macos-arm64-signed
+          path: ${{ runner.temp }}/macos-package/*_signed.zip
+          if-no-files-found: error
+          compression-level: 0

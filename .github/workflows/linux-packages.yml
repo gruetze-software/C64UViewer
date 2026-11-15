@@ -1,0 +1,49 @@
+name: Flatpak and Snap
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]*'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [flatpak, snap]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Prepare Linux x64 payload
+        run: bash packaging/prepare-linux.sh
+      - name: Build Flatpak
+        if: matrix.package == 'flatpak'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          remote=https://dl.flathub.org/repo/flathub.flatpakrepo
+          app_id=de.gruetze_software.C64UViewer
+          version=$(cat artifacts/linux-payload/VERSION)
+          flatpak remote-add --user --if-not-exists flathub "$remote"
+          flatpak-builder --user --install-deps-from=flathub --disable-rofiles-fuse \
+            --repo=artifacts/flatpak-repo artifacts/flatpak-build "flatpak/$app_id.yaml"
+          flatpak build-bundle --runtime-repo="$remote" artifacts/flatpak-repo \
+            "artifacts/c64uviewer_${version}_x86_64.flatpak" "$app_id"
+      - name: Build Snap
+        if: matrix.package == 'snap'
+        run: |
+          sudo snap install snapcraft --classic
+          sudo /snap/bin/snapcraft pack --destructive-mode --output artifacts/
+      - uses: actions/upload-artifact@v6
+        with:
+          name: c64uviewer-${{ matrix.package }}-x64
+          path: artifacts/*.${{ matrix.package }}
+          if-no-files-found: error
+          compression-level: 0
