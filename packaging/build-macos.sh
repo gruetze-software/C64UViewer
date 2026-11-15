@@ -24,7 +24,8 @@ cmake -S "$sdl_dir/SDL2-$sdl_version" -B "$sdl_dir/build" \
     -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64 \
     -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_TEST=OFF
 cmake --build "$sdl_dir/build" --parallel
-cp -L "$sdl_dir/build/libSDL2.dylib" "$app/Contents/MacOS/libSDL2.dylib"
+# SDL2 builds libSDL2-2.0.dylib; .NET resolves SDL2 as libSDL2.dylib.
+cp -L "$sdl_dir/build/libSDL2-2.0.dylib" "$app/Contents/MacOS/libSDL2.dylib"
 cp "$sdl_dir/SDL2-$sdl_version/LICENSE.txt" "$app/Contents/Resources/SDL2-LICENSE.txt"
 
 cp Assets/icon.png "$app/Contents/Resources/icon.png"
