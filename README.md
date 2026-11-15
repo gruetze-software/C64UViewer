@@ -4,7 +4,10 @@
 
 Watch live VIC video and listen to audio from your Commodore 64 Ultimate or Ultimate 64 over your local network. C64U Slim-Viewer runs on Windows, Linux and Apple Silicon Macs and is built with .NET 10 and Avalonia.
 
-![C64U Slim-Viewer displaying a live C64 stream](https://github.com/user-attachments/assets/28e98855-bf88-4be1-96b0-f32d154cf99f)
+<img width="782" height="604" alt="grafik" src="https://github.com/user-attachments/assets/f78c3860-4bb6-49fb-8ddc-1090567e6a0c" />
+
+<img width="342" height="401" alt="grafik" src="https://github.com/user-attachments/assets/08d152b1-b452-4e29-9af5-f55552995eee" />
+
 
 ## Features
 
