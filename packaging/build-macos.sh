@@ -9,8 +9,17 @@ version=$(dotnet msbuild C64UViewer.csproj -nologo -getProperty:Version)
 app="$output/C64UViewer.app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 dotnet publish C64UViewer.csproj -c Release -r osx-arm64 --self-contained true \
-    -p:PublishSingleFile=false -o "$app/Contents/MacOS"
+    -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=false \
+    -o "$app/Contents/MacOS"
 rm -f "$app/Contents/MacOS/createdump"
+
+# Only Mach-O code belongs in the app's executable directory.
+for binary in "$app/Contents/MacOS/"*; do
+    if [[ "$(file -b "$binary")" != *Mach-O* ]]; then
+        echo "::error::Unexpected non-Mach-O file in Contents/MacOS: $(basename "$binary")"
+        exit 1
+    fi
+done
 
 # Bundle SDL2 so library validation can stay enabled on the signed app.
 sdl_dir=$(mktemp -d)
