@@ -84,7 +84,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
     <key>CFBundleIdentifier</key>
     <string>com.gruetze.c64uviewer</string>
     <key>CFBundleName</key>
-    <string>C64U Viewer</string>
+    <string>C64U Slim-Viewer</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

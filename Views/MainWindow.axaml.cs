@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
@@ -8,13 +9,17 @@ namespace C64UViewer.Views;
 
 public partial class MainWindow : Window
 {
-    private async void InfoClick(object? sender, RoutedEventArgs e)
+    private async void InfoClick(object? sender, RoutedEventArgs e) => await ShowInfoAsync();
+
+    internal async Task ShowInfoAsync()
     {
         if (DataContext is MainWindowViewModel viewModel)
             await new AboutWindow(viewModel.DisplayVersion).ShowDialog(this);
     }
 
-    private async void CrtClick(object? sender, RoutedEventArgs e)
+    private async void CrtClick(object? sender, RoutedEventArgs e) => await ShowCrtSettingsAsync();
+
+    internal async Task ShowCrtSettingsAsync()
     {
         if (DataContext is MainWindowViewModel viewModel)
             await new CrtSettingsWindow(viewModel).ShowDialog(this);
