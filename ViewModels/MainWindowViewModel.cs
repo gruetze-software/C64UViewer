@@ -31,9 +31,11 @@ public partial class MainWindowViewModel : ViewModelBase
     public double GlowOpacity => GlowEnabled ? GlowStrength / 100.0 : 0;
     public string DisplayVersion => _version.Build == 0 ? _version.ToString(2) : _version.ToString(3);
 
-    private const int Width = 384;
+    internal const int Width = 384;
     private const int Height = 272;
     private const int HeaderLength = 12;
+    [ObservableProperty] private int _videoHeight = Height;
+    private int _receivedVideoHeight = Height;
     private const string ProjectUrl = "https://github.com/gruetze-software/C64UViewer";
 
     private readonly uint[] _pixels = new uint[Width * Height];
@@ -121,7 +123,8 @@ public partial class MainWindowViewModel : ViewModelBase
         if (data.Length <= HeaderLength)
             return;
 
-        int line = (data[4] | data[5] << 8) & 0x7FFF;
+        int lineField = data[4] | data[5] << 8;
+        int line = lineField & 0x7FFF;
         if (line >= Height)
             return;
 
@@ -130,6 +133,11 @@ public partial class MainWindowViewModel : ViewModelBase
 
         lock (_frameLock)
         {
+            // The high bit marks the last packet of a VIC frame.
+            int endLine = line + length * 2 / Width;
+            if ((lineField & 0x8000) != 0 && endLine is 240 or Height)
+                _receivedVideoHeight = endLine;
+
             for (int i = 0; i < length; i++)
             {
                 byte colors = data[HeaderLength + i];
@@ -145,6 +153,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public unsafe bool PresentFrame()
     {
+        int videoHeight;
         lock (_frameLock)
         {
             if (!_isDirty || _closed)
@@ -158,8 +167,11 @@ public partial class MainWindowViewModel : ViewModelBase
             }
 
             _isDirty = false;
-            return true;
+            videoHeight = _receivedVideoHeight;
         }
+
+        VideoHeight = videoHeight;
+        return true;
     }
 
     partial void OnUdpVideoPortChanged(int value) => ApplySettings();

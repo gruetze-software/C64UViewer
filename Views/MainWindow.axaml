@@ -7,7 +7,8 @@
         x:DataType="vm:MainWindowViewModel"
         Title="{Binding AppTitle}"
         Background="#1C1C1C" Foreground="White"
-        Width="950" Height="650" WindowStartupLocation="CenterScreen"> <Window.Styles>
+        Width="780" Height="636" MinWidth="620" MinHeight="360" WindowStartupLocation="CenterScreen">
+    <Window.Styles>
         <Style Selector="Button">
             <Setter Property="Background" Value="#444444" />
             <Setter Property="Foreground" Value="White" />
@@ -39,84 +40,48 @@
     </Window.Styles>
 
 
-    <Grid RowDefinitions="Auto, Auto, *" Margin="10">
-        <Button Grid.Row="0" 
-                Classes="UpdateBanner"
+    <Grid RowDefinitions="Auto,48,*,32" Margin="6">
+        <Button Classes="UpdateBanner"
                 Command="{Binding OpenUpdateUrlCommand}"
                 IsVisible="{Binding IsUpdateAvailable}"
-                HorizontalAlignment="Stretch"
-                Margin="0,0,0,10">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <PathIcon Width="18" Height="18" VerticalAlignment="Center"
-                          Data="M11,2V13L7.5,9.5L6.08,10.92L12,16.84L17.92,10.92L16.5,9.5L13,13V2H11M4,18V20H20V18H4Z" 
-                          Foreground="White"/>
-                <TextBlock Text="{Binding LatestVersionText}" 
-                           VerticalAlignment="Center" 
-                           FontWeight="Bold" Margin="10,0,0,0"/>
-            </StackPanel>
-        </Button>
+                HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                Content="{Binding LatestVersionText}" Margin="0,0,0,6"/>
 
-        <Border Grid.Row="1" Background="#2D2D2D" CornerRadius="5" Padding="10" Margin="0,0,0,10">
-            <DockPanel LastChildFill="False">
-                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Spacing="15">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
+        <Border Grid.Row="1" Background="#2D2D2D" CornerRadius="5" Padding="8,0" Margin="0,0,0,6">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                         <TextBlock Text="PC IP:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding LocalIpAddress}" Foreground="SpringGreen" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding LocalIpAddress}" Foreground="SpringGreen"
+                                   FontWeight="Bold" VerticalAlignment="Center"/>
                     </StackPanel>
-                
-                    <Separator Width="1" Height="20" Background="#444444"/>
-
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <TextBlock Text="Video Port:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                        <TextBox Text="{Binding UdpVideoPort, UpdateSourceTrigger=LostFocus}" Width="60" VerticalContentAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                        <TextBlock Text="Video:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
+                        <TextBox Text="{Binding UdpVideoPort, UpdateSourceTrigger=LostFocus}" Width="60"
+                                 AutomationProperties.Name="Video port" VerticalContentAlignment="Center"/>
                     </StackPanel>
-
-                    <Separator Width="1" Height="20" Background="#444444"/>
-
-                    <StackPanel Orientation="Horizontal" Spacing="10">
+                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
                         <CheckBox IsChecked="{Binding IsAudioEnabled}" Content="Audio" VerticalAlignment="Center"/>
-                        <StackPanel Orientation="Horizontal" Spacing="5" IsEnabled="{Binding IsAudioEnabled}">
-                            <TextBlock Text="Port:" Foreground="#AAAAAA" VerticalAlignment="Center"/>
-                            <TextBox Text="{Binding UdpAudioPort, UpdateSourceTrigger=LostFocus}" Width="60" VerticalContentAlignment="Center"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <StackPanel Orientation="Vertical" Spacing="5" IsVisible="{Binding !IsAudioAvailable}">
-                        <TextBlock Text="⚠️ SDL2 missing! Run 'brew install sdl2' (Mac) or check SDL2.dll (Win)." 
-                            Foreground="Orange" FontSize="10" TextWrapping="Wrap" MaxWidth="200"/>
-                    </StackPanel>
-
-                    <Separator Width="1" Height="20" Background="#444444"/>
-
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <Ellipse Width="10" Height="10" Fill="{Binding StatusColor}" VerticalAlignment="Center"/>
-                        <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center" FontSize="12"/>
+                        <TextBox Text="{Binding UdpAudioPort, UpdateSourceTrigger=LostFocus}" Width="60"
+                                 IsEnabled="{Binding IsAudioEnabled}" AutomationProperties.Name="Audio port"
+                                 VerticalContentAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>
-
-                <Button DockPanel.Dock="Right" Content="CRT" Click="CrtClick" Margin="8,0,0,0"/>
-                <Button DockPanel.Dock="Right" Click="InfoClick">
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                        <PathIcon Width="14" Height="14" VerticalAlignment="Center"
-                                  Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,17A1.5,1.5 0 0,1 10.5,15.5A1.5,1.5 0 0,1 12,14A1.5,1.5 0 0,1 13.5,15.5A1.5,1.5 0 0,1 12,17M12,7C13.93,7 15.5,8.57 15.5,10.5C15.5,11.63 14.81,12.6 13.81,13C13.31,13.25 13,13.62 13,14H11V13.88C11,13.12 11.5,12.5 12.12,12.19C12.95,11.78 13.5,11.21 13.5,10.5A1.5,1.5 0 0,0 12,9A1.5,1.5 0 0,0 10.5,10.5H8.5C8.5,8.57 10.07,7 12,7Z" 
-                                  Foreground="White"/>
-                        <TextBlock Text="Info" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </DockPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Button Content="Info" Click="InfoClick"/>
+                    <Button Content="CRT" Click="CrtClick"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <Border Grid.Row="2" Background="Black" CornerRadius="5" ClipToBounds="True">
-            <Viewbox Stretch="Uniform" 
-                     VerticalAlignment="Center" 
-                     HorizontalAlignment="Center">
-                
-                <Grid Width="384" Height="272">
-                    <Image x:Name="C64Display"
-                        Source="{Binding ScreenBitmap}" 
-                        Width="384" Height="272" 
-                        RenderOptions.BitmapInterpolationMode="None" />
+        <Grid Grid.Row="2" x:Name="VideoArea">
+            <Viewbox Stretch="Uniform" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid Width="384" Height="{Binding VideoHeight}" ClipToBounds="True">
+                    <Image x:Name="C64Display" Source="{Binding ScreenBitmap}"
+                           Width="384" Height="272" VerticalAlignment="Top"
+                           RenderOptions.BitmapInterpolationMode="None"/>
                     <Image x:Name="GlowDisplay" Source="{Binding ScreenBitmap}"
+                           Width="384" Height="272" VerticalAlignment="Top"
                            IsVisible="{Binding GlowEnabled}" Opacity="{Binding GlowOpacity}" IsHitTestVisible="False"
                            RenderOptions.BitmapInterpolationMode="None">
                         <Image.Effect><BlurEffect Radius="5"/></Image.Effect>
@@ -125,6 +90,17 @@
                                            Opacity="{Binding ScanlineOpacity}" IsHitTestVisible="False"/>
                 </Grid>
             </Viewbox>
+        </Grid>
+
+        <Border Grid.Row="3" Background="#2D2D2D" CornerRadius="5" Padding="8,0" Margin="0,6,0,0">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                <Ellipse Width="8" Height="8" Fill="{Binding StatusColor}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" FontSize="12"
+                           TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding StatusMessage}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="SDL2 unavailable" Foreground="Orange" FontSize="12"
+                           IsVisible="{Binding !IsAudioAvailable}" VerticalAlignment="Center"
+                           ToolTip.Tip="Install SDL2 for audio (Windows: SDL2.dll, macOS: brew install sdl2, Linux: libsdl2-2.0-0)."/>
+            </Grid>
         </Border>
     </Grid>
 </Window>

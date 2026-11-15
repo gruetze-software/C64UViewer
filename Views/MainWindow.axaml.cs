@@ -26,11 +26,23 @@ public partial class MainWindow : Window
         InitializeComponent();
         _renderTimer.Tick += (_, _) =>
         {
-            if (DataContext is MainWindowViewModel viewModel && viewModel.PresentFrame())
+            if (DataContext is not MainWindowViewModel viewModel)
+                return;
+
+            int previousHeight = viewModel.VideoHeight;
+            if (viewModel.PresentFrame())
             {
                 C64Display.InvalidateVisual();
                 if (viewModel.GlowOpacity > 0)
                     GlowDisplay.InvalidateVisual();
+
+                if (viewModel.VideoHeight != previousHeight && WindowState == WindowState.Normal &&
+                    VideoArea.Bounds.Width > 0 && VideoArea.Bounds.Height > 0)
+                {
+                    double surroundingHeight = ClientSize.Height - VideoArea.Bounds.Height;
+                    Height = surroundingHeight +
+                        VideoArea.Bounds.Width * viewModel.VideoHeight / MainWindowViewModel.Width;
+                }
             }
         };
         Opened += (_, _) =>
