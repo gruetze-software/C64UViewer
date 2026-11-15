@@ -7,7 +7,7 @@ output="${2:?Output directory required}"
 app="$output/C64UViewer.app"
 
 for secret in MACOS_CERTIFICATE_P12_BASE64 MACOS_CERTIFICATE_PASSWORD APPLE_API_KEY_P8 APPLE_API_KEY_ID APPLE_API_ISSUER_ID; do
-    if [[ -z "${!secret}" ]]; then
+    if [[ -z "${!secret:-}" ]]; then
         echo "::error::Missing GitHub Actions secret $secret"
         exit 1
     fi
@@ -15,11 +15,20 @@ done
 
 work=$(mktemp -d)
 keychain="$work/build.keychain-db"
+original_keychains=()
+while IFS= read -r entry; do
+    entry="${entry#*\"}"
+    entry="${entry%\"*}"
+    [[ -z "$entry" ]] || original_keychains+=("$entry")
+done < <(security list-keychains -d user)
 cleanup() {
+    security list-keychains -d user -s "${original_keychains[@]}" >/dev/null 2>&1 || true
     security delete-keychain "$keychain" >/dev/null 2>&1 || true
     rm -rf -- "$work"
 }
 trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 
 password=$(openssl rand -hex 32)
 printf '%s' "$MACOS_CERTIFICATE_P12_BASE64" | base64 -D > "$work/certificate.p12"
@@ -29,8 +38,9 @@ notary_auth=(--key "$notary_key" --key-id "$APPLE_API_KEY_ID" --issuer "$APPLE_A
 security create-keychain -p "$password" "$keychain"
 security unlock-keychain -p "$password" "$keychain"
 security set-keychain-settings -lut 21600 "$keychain"
-security import "$work/certificate.p12" -k "$keychain" -P "$MACOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
-security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$password" "$keychain" >/dev/null
+security list-keychains -d user -s "$keychain" "${original_keychains[@]}"
+security import "$work/certificate.p12" -t cert -f pkcs12 -k "$keychain" \
+    -P "$MACOS_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
 
 identity=$(security find-identity -v -p codesigning "$keychain" |
     awk '/"Developer ID Application:/ { print $2 }')
@@ -38,6 +48,9 @@ if [[ ! "$identity" =~ ^[[:xdigit:]]{40}$ ]]; then
     echo "::error::Expected exactly one valid Developer ID Application identity in the P12"
     exit 1
 fi
+echo "Granting codesign access to the imported private key"
+security set-key-partition-list -S apple-tool:,apple:,codesign: -k "$password" "$keychain" >/dev/null
+echo "Signing macOS app and native libraries"
 
 # Sign native code individually before sealing the app bundle.
 while IFS= read -r -d '' file; do
