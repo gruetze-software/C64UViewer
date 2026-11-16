@@ -1,6 +1,15 @@
-# C64U Slim-Viewer
+<p align="center">
+  <img src="Assets/icon.png" width="128" alt="C64U Slim-Viewer logo">
+</p>
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+<h1 align="center">C64U Slim-Viewer</h1>
+
+<p align="center">
+  <a href="https://github.com/gruetze-software/C64UViewer/releases/latest"><img src="https://img.shields.io/github/v/release/gruetze-software/C64UViewer" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-blue" alt="Windows, Linux, and macOS">
+  <a href="https://dotnet.microsoft.com/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet" alt=".NET 10"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license"></a>
+</p>
 
 Watch live VIC video and listen to audio from your Commodore 64 Ultimate or Ultimate 64 over your local network. C64U Slim-Viewer runs on Windows, Linux, and Apple Silicon and Intel Macs. It is built with .NET 10 and Avalonia.
 
@@ -73,4 +82,4 @@ dotnet build -c Release
 
 Developed by **Grütze-Software** and released under the [MIT License](LICENSE). Thanks to Gideon's Logic for the Ultimate 64 hardware and to [Perifractic (Retro Recipes)](https://www.youtube.com/@RetroRecipes) for inspiring projects that bring the C64 into the modern era.
 
-[Support development on Ko-fi](https://ko-fi.com/gruetzesoftware)
+[![Support development on Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20development-FF5E5B?logo=kofi&logoColor=white)](https://ko-fi.com/gruetzesoftware)
