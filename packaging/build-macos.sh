@@ -42,7 +42,11 @@ cmake --build "$sdl_dir/build" --parallel
 # SDL2 builds libSDL2-2.0.dylib; .NET resolves SDL2 as libSDL2.dylib.
 cp -L "$sdl_dir/build/libSDL2-2.0.dylib" "$app/Contents/MacOS/libSDL2.dylib"
 for binary in "$app/Contents/MacOS/"*; do
-    lipo -verify_arch "$native_arch" "$binary"
+    if ! lipo "$binary" -verify_arch "$native_arch"; then
+        echo "::error::$(basename "$binary") does not contain $native_arch" >&2
+        lipo -info "$binary" >&2 || true
+        exit 1
+    fi
 done
 cp "$sdl_dir/SDL2-$sdl_version/LICENSE.txt" "$app/Contents/Resources/SDL2-LICENSE.txt"
 
