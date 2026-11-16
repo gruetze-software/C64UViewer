@@ -69,7 +69,13 @@ mkdir "$image_root"
 ditto "$app" "$image_root/C64UViewer.app"
 ln -s /Applications "$image_root/Applications"
 dmg="$output/c64uviewer_${tag#v}_macos_${arch}.dmg"
-hdiutil create -volname "C64U Slim-Viewer" -srcfolder "$image_root" -format UDZO -ov "$dmg"
+# The source folder can occupy more space when copied into the image filesystem.
+payload_kib=$(du -sk "$image_root" | awk '{print $1}')
+image_mib=$(( (payload_kib + 1023) / 1024 * 2 + 64 ))
+echo "Creating $arch DMG with ${image_mib} MiB of volume capacity"
+df -h "$work" "$output"
+hdiutil create -volname "C64U Slim-Viewer" -srcfolder "$image_root" \
+    -size "${image_mib}m" -format UDZO -ov "$dmg"
 codesign --force --keychain "$keychain" --sign "$identity" --timestamp "$dmg"
 codesign --verify --strict --verbose=2 "$dmg"
 
