@@ -115,7 +115,9 @@ public partial class MainWindowViewModel : ViewModelBase
         IsAudioAvailable = CheckAudioAvailability();
         ConfigureListeners();
         _statusTimer.Start();
+#if !WINDOWS_STORE
         _ = CheckForUpdatesAsync();
+#endif
     }
 
     private void ProcessUdpPacket(byte[] data)

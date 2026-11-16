@@ -40,6 +40,10 @@
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(WindowsStoreBuild)' == 'true'">
+    <DefineConstants>$(DefineConstants);WINDOWS_STORE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="Models\" />
     <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />

@@ -1,0 +1,33 @@
+name: Windows Store
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-2025
+    env:
+      STORE_PACKAGE_NAME: ${{ vars.WINDOWS_STORE_PACKAGE_NAME }}
+      STORE_PUBLISHER: ${{ vars.WINDOWS_STORE_PUBLISHER }}
+      STORE_PUBLISHER_DISPLAY_NAME: ${{ vars.WINDOWS_STORE_PUBLISHER_DISPLAY_NAME }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build Store MSIX
+        shell: powershell
+        run: |
+          if (!$env:STORE_PACKAGE_NAME -or !$env:STORE_PUBLISHER -or !$env:STORE_PUBLISHER_DISPLAY_NAME) {
+              throw 'Set the three WINDOWS_STORE_* repository variables from Partner Center.'
+          }
+          ./packaging/Build-WindowsStore.ps1 -PackageName $env:STORE_PACKAGE_NAME -Publisher $env:STORE_PUBLISHER -PublisherDisplayName $env:STORE_PUBLISHER_DISPLAY_NAME
+      - uses: actions/upload-artifact@v6
+        with:
+          name: c64uviewer-windows-store-x64
+          path: artifacts/windows-store/*.msix
+          if-no-files-found: error
+          compression-level: 0
