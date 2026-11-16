@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Watch live VIC video and listen to audio from your Commodore 64 Ultimate or Ultimate 64 over your local network. C64U Slim-Viewer runs on Windows, Linux and Apple Silicon Macs and is built with .NET 10 and Avalonia.
+Watch live VIC video and listen to audio from your Commodore 64 Ultimate or Ultimate 64 over your local network. C64U Slim-Viewer runs on Windows, Linux, and Apple Silicon and Intel Macs. It is built with .NET 10 and Avalonia.
 
 <img width="782" height="604" alt="grafik" src="https://github.com/user-attachments/assets/f78c3860-4bb6-49fb-8ddc-1090567e6a0c" />
 
@@ -26,7 +26,7 @@ Download the package for your platform from [GitHub Releases](https://github.com
 | --- | --- |
 | Windows x64 | Extract the ZIP and run `c64uviewer.exe`. Keep the included `SDL2.dll` next to the EXE for audio. |
 | Debian, Ubuntu or Linux Mint (x86-64) | Install the DEB with `sudo apt install ./c64uviewer_VERSION_amd64.deb`. Replace `VERSION` with the version in the downloaded filename. |
-| macOS (Apple Silicon) | Extract the ZIP and open `C64UViewer.app`. For audio, install SDL2 with `brew install sdl2`. |
+| macOS | Download the signed DMG for Apple Silicon (`arm64`) or Intel (`x64`), open it and drag `C64UViewer.app` into Applications. SDL2 is included. |
 
 The release packages include the .NET runtime.
 

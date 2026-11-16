@@ -7,13 +7,30 @@ on:
         description: Existing stable release tag (for example v1.3.1)
         required: true
         type: string
+      publish_to_release:
+        description: Add the DMGs to the existing GitHub release
+        type: boolean
+        default: true
+  workflow_call:
+    inputs:
+      release_tag:
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   sign:
-    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-15
+          - arch: x64
+            runner: macos-15-intel
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Validate tag
         env:
@@ -36,8 +53,8 @@ jobs:
         working-directory: source
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
-        run: bash ../tooling/packaging/build-macos.sh "$RELEASE_TAG" "$RUNNER_TEMP/macos-package"
-      - name: Sign and notarize macOS app
+        run: bash ../tooling/packaging/build-macos.sh "$RELEASE_TAG" "$RUNNER_TEMP/macos-package" "${{ matrix.arch }}"
+      - name: Sign app and notarize DMG
         env:
           RELEASE_TAG: ${{ inputs.release_tag }}
           MACOS_CERTIFICATE_P12_BASE64: ${{ secrets.MACOS_CERTIFICATE_P12_BASE64 }}
@@ -45,10 +62,37 @@ jobs:
           APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER_ID: ${{ secrets.APPLE_API_ISSUER_ID }}
-        run: bash tooling/packaging/sign-macos.sh "$RELEASE_TAG" "$RUNNER_TEMP/macos-package"
+        run: bash tooling/packaging/sign-macos.sh "$RELEASE_TAG" "$RUNNER_TEMP/macos-package" "${{ matrix.arch }}"
       - uses: actions/upload-artifact@v6
         with:
-          name: c64uviewer-macos-arm64-signed
-          path: ${{ runner.temp }}/macos-package/*_signed.zip
+          name: c64uviewer-macos-${{ matrix.arch }}-signed
+          path: ${{ runner.temp }}/macos-package/*.dmg
           if-no-files-found: error
           compression-level: 0
+
+  publish:
+    if: inputs.publish_to_release == true
+    needs: sign
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: c64uviewer-macos-*-signed
+          path: macos-assets
+          merge-multiple: true
+      - name: Add DMGs to the existing release
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          prefix="c64uviewer_${RELEASE_TAG#v}_macos"
+          # Keep the existing ZIP available until both DMGs are uploaded.
+          gh release upload "$RELEASE_TAG" "macos-assets/${prefix}_arm64.dmg" "macos-assets/${prefix}_x64.dmg" --clobber
+          assets=$(gh release view "$RELEASE_TAG" --json assets --jq '.assets[].name')
+          if grep -Fxq "${prefix}_arm64.zip" <<< "$assets"; then
+            gh release delete-asset "$RELEASE_TAG" "${prefix}_arm64.zip" --yes
+          fi

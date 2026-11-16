@@ -20,22 +20,25 @@ GitHub zeigt gespeicherte Secret-Werte nachträglich nicht an. Verwende deine si
 base64 -i developer-id.p12 | tr -d '\n' | pbcopy
 ```
 
-## 2. Signierten Test-Build starten
+## 2. DMGs bauen oder zu einem Release hinzufügen
+
+Der Release-Workflow baut und veröffentlicht für neue Versions-Tags zwei signierte und notarisierte DMGs. Er erstellt den GitHub-Release, sobald beide macOS-Pakete und die übrigen Release-Dateien vorliegen.
 
 1. Öffne **Actions → Sign and notarize macOS → Run workflow**.
-2. Wähle `main` und gib bei `release_tag` einen vorhandenen Tag ein, zum Beispiel `v1.3.1`.
-3. Lade nach erfolgreichem Lauf das Artefakt `c64uviewer-macos-arm64-signed` herunter. Darin liegt das signierte und notarisierte ZIP für Apple Silicon inklusive SDL2.
+2. Wähle `main` und gib bei `release_tag` einen vorhandenen Tag ein, zum Beispiel `v1.3.3`.
+3. Mit **Add the DMGs to the existing GitHub release** lädt der Workflow beide DMGs in das bestehende Release und entfernt das bisherige macOS-Release-ZIP nach erfolgreichem Upload. Deaktiviere die Option für einen reinen Test-Build.
+4. Die Artefakte `c64uviewer-macos-arm64-signed` und `c64uviewer-macos-x64-signed` enthalten jeweils eine DMG inklusive SDL2.
 
-Der Workflow legt das ZIP ausschließlich als GitHub-Artefakt ab. Der API-Schlüssel dient der Anmeldung bei Apples Notarisierungsdienst.
+Der API-Schlüssel dient der Anmeldung bei Apples Notarisierungsdienst.
 
 ## 3. App auf dem Mac prüfen
 
-Entpacke das innere ZIP und führe im Ordner mit der App aus:
+Öffne die DMG und ziehe die App in **Programme**. Ersetze im Prüfkommando den Paketnamen durch den tatsächlichen DMG-Dateinamen:
 
 ```sh
-codesign --verify --deep --strict --verbose=2 C64UViewer.app
-xcrun stapler validate C64UViewer.app
-spctl --assess --type execute --verbose=4 C64UViewer.app
+xcrun stapler validate c64uviewer_1.3.3_macos_arm64.dmg
+codesign --verify --deep --strict --verbose=2 /Applications/C64UViewer.app
+spctl --assess --type execute --verbose=4 /Applications/C64UViewer.app
 ```
 
 [Apple Developer ID](https://developer.apple.com/developer-id/) · [Apple-Notarisierung](https://developer.apple.com/documentation/security/customizing-the-notarization-workflow)

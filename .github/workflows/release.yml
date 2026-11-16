@@ -15,8 +15,16 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  macos:
+    uses: ./.github/workflows/macos-sign.yml
+    with:
+      release_tag: ${{ inputs.release_tag || github.ref_name }}
+    secrets: inherit
+
+  packages:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
     env:
       RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
     steps:
@@ -30,7 +38,30 @@ jobs:
         run: test "$RELEASE_TAG" = "v$(dotnet msbuild C64UViewer.csproj -getProperty:Version)"
       - name: Build release packages
         run: bash build.sh
+      - uses: actions/upload-artifact@v6
+        with:
+          name: release-packages
+          path: dist/release/*
+          if-no-files-found: error
+          compression-level: 0
+
+  release:
+    needs: [macos, packages]
+    runs-on: ubuntu-24.04
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          path: release-assets
+          merge-multiple: true
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$RELEASE_TAG" --verify-tag --generate-notes dist/release/*
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          prefix="c64uviewer_${RELEASE_TAG#v}_macos"
+          test -f "release-assets/${prefix}_arm64.dmg"
+          test -f "release-assets/${prefix}_x64.dmg"
+          gh release create "$RELEASE_TAG" --verify-tag --generate-notes release-assets/*

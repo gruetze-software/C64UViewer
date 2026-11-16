@@ -4,6 +4,8 @@ umask 077
 
 tag="${1:?Release tag required}"
 output="${2:?Output directory required}"
+arch="${3:?Architecture required (arm64 or x64)}"
+case "$arch" in arm64|x64) ;; *) exit 1 ;; esac
 app="$output/C64UViewer.app"
 
 for secret in MACOS_CERTIFICATE_P12_BASE64 MACOS_CERTIFICATE_PASSWORD APPLE_API_KEY_P8 APPLE_API_KEY_ID APPLE_API_ISSUER_ID; do
@@ -62,9 +64,16 @@ done < <(find "$app/Contents" -type f -print0)
 codesign --force --keychain "$keychain" --sign "$identity" --timestamp --options runtime \
     --entitlements "$(dirname "$0")/macos-entitlements.plist" "$app"
 codesign --verify --deep --strict --verbose=2 "$app"
-ditto -c -k --keepParent "$app" "$work/notarization.zip"
+image_root="$work/image"
+mkdir "$image_root"
+ditto "$app" "$image_root/C64UViewer.app"
+ln -s /Applications "$image_root/Applications"
+dmg="$output/c64uviewer_${tag#v}_macos_${arch}.dmg"
+hdiutil create -volname "C64U Slim-Viewer" -srcfolder "$image_root" -format UDZO -ov "$dmg"
+codesign --force --keychain "$keychain" --sign "$identity" --timestamp "$dmg"
+codesign --verify --strict --verbose=2 "$dmg"
 
-xcrun notarytool submit "$work/notarization.zip" "${notary_auth[@]}" \
+xcrun notarytool submit "$dmg" "${notary_auth[@]}" \
     --wait --output-format json > "$work/result.json" || true
 status=$(plutil -extract status raw -o - "$work/result.json" 2>/dev/null || true)
 if [[ "$status" != Accepted ]]; then
@@ -74,6 +83,6 @@ if [[ "$status" != Accepted ]]; then
     fi
     exit 1
 fi
-xcrun stapler staple "$app"
-xcrun stapler validate "$app"
-ditto -c -k --keepParent "$app" "$output/c64uviewer_${tag#v}_macos_arm64_signed.zip"
+xcrun stapler staple "$dmg"
+xcrun stapler validate "$dmg"
+hdiutil verify "$dmg"

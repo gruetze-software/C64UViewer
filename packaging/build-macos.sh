@@ -3,12 +3,18 @@ set -euo pipefail
 
 tag="${1:?Release tag required}"
 output="${2:?Output directory required}"
+arch="${3:?Architecture required (arm64 or x64)}"
+case "$arch" in
+    arm64) native_arch=arm64 ;;
+    x64) native_arch=x86_64 ;;
+    *) echo "Unsupported architecture: $arch" >&2; exit 1 ;;
+esac
 version=$(dotnet msbuild C64UViewer.csproj -nologo -getProperty:Version)
 [[ "$tag" == "v$version" ]] || { echo "Tag $tag does not match project version $version" >&2; exit 1; }
 
 app="$output/C64UViewer.app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
-dotnet publish C64UViewer.csproj -c Release -r osx-arm64 --self-contained true \
+dotnet publish C64UViewer.csproj -c Release -r "osx-$arch" --self-contained true \
     -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=false \
     -o "$app/Contents/MacOS"
 rm -f "$app/Contents/MacOS/createdump"
@@ -30,11 +36,14 @@ curl --fail --silent --show-error --location \
 echo "5f5993c530f084535c65a6879e9b26ad441169b3e25d789d83287040a9ca5165  $sdl_dir/sdl.tar.gz" | shasum -a 256 -c
 tar -xzf "$sdl_dir/sdl.tar.gz" -C "$sdl_dir"
 cmake -S "$sdl_dir/SDL2-$sdl_version" -B "$sdl_dir/build" \
-    -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=arm64 \
+    -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="$native_arch" \
     -DSDL_SHARED=ON -DSDL_STATIC=OFF -DSDL_TEST=OFF
 cmake --build "$sdl_dir/build" --parallel
 # SDL2 builds libSDL2-2.0.dylib; .NET resolves SDL2 as libSDL2.dylib.
 cp -L "$sdl_dir/build/libSDL2-2.0.dylib" "$app/Contents/MacOS/libSDL2.dylib"
+for binary in "$app/Contents/MacOS/"*; do
+    lipo -verify_arch "$native_arch" "$binary"
+done
 cp "$sdl_dir/SDL2-$sdl_version/LICENSE.txt" "$app/Contents/Resources/SDL2-LICENSE.txt"
 
 cp Assets/icon.png "$app/Contents/Resources/icon.png"

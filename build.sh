@@ -55,50 +55,6 @@ cp "./dist/temp_windows/$APP_NAME.exe" ./dist/temp_windows/SDL2.dll dist/windows
 
 # Rechte zurückgeben, damit rm -rf beim naechsten Mal wieder funktioniert
 
-# 8. macOS Build (Apple Silicon / M1-M3)
-echo "Baue macOS (ARM64) App-Struktur..."
-APP_BUNDLE="dist/macos/C64UViewer.app"
-MACOS_BIN="$APP_BUNDLE/Contents/MacOS"
-RESOURCES="$APP_BUNDLE/Contents/Resources"
-
-# Ordnerstruktur erstellen
-mkdir -p "$MACOS_BIN"
-mkdir -p "$RESOURCES"
-
-# Kompilieren für Apple Silicon (M1/M2/M3)
-dotnet publish $PROJ -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --output ./dist/temp_macos
-
-# Dateien in das App-Bundle verschieben
-install -m 755 "./dist/temp_macos/$APP_NAME" "$MACOS_BIN/"
-cp Assets/icon.png "$RESOURCES/icon.png"
-
-# 9. Die PList-Datei erstellen (Damit macOS weiß, was das für eine App ist)
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>CFBundleExecutable</key>
-    <string>c64uviewer</string>
-    <key>CFBundleIconFile</key>
-    <string>icon.png</string>
-    <key>CFBundleIdentifier</key>
-    <string>com.gruetze.c64uviewer</string>
-    <key>CFBundleName</key>
-    <string>C64U Slim-Viewer</string>
-    <key>CFBundlePackageType</key>
-    <string>APPL</string>
-    <key>CFBundleShortVersionString</key>
-    <string>'$VERSION'</string>
-    <key>LSMinimumSystemVersion</key>
-    <string>10.15</string>
-</dict>
-</plist>' > "$APP_BUNDLE/Contents/Info.plist"
-
-# WICHTIG: Ausführungsrechte für das Binary setzen
-chmod +x "$MACOS_BIN/c64uviewer"
-
-echo "macOS App wurde unter $APP_BUNDLE erstellt."
-
 # Erzeuge die ReadMe Datei zuerst in einem neutralen Ort
 echo "Erzeuge ReadMe.txt..."
 cat << EOF > dist/README_FIRST.txt
@@ -107,7 +63,6 @@ C64U Slim-Viewer v$VERSION
 Requirements:
 - Windows: SDL2.dll must be in the same folder (included).
 - Linux: sudo apt install libsdl2-2.0-0
-- macOS: brew install sdl2
 
 Ultimate 64 Settings:
 - Set Audio and Video Stream to 'Enabled'
@@ -127,13 +82,7 @@ cp dist/README_FIRST.txt dist/windows/
 echo "Zippe Windows Version..."
 cd dist/windows && zip -r "../../$RELEASE_DIR/${APP_NAME}_${VERSION}_windows_x64.zip" . && cd ../..
 
-# B. macOS ZIP erstellen
-# Bei macOS gehört die ReadMe NICHT in das .app Bundle, sondern daneben ins ZIP
-echo "Zippe macOS Version..."
-cp dist/README_FIRST.txt dist/macos/
-cd dist/macos && zip -r "../../$RELEASE_DIR/${APP_NAME}_${VERSION}_macos_arm64.zip" "$(basename "$APP_BUNDLE")" README_FIRST.txt && cd ../..
-
-# C. Debian Paket kopieren
+# B. Debian Paket kopieren
 cp dist/linux/*.deb "$RELEASE_DIR/"
 # Die ReadMe auch noch mal lose in den Release-Ordner legen
 cp dist/README_FIRST.txt "$RELEASE_DIR/"
