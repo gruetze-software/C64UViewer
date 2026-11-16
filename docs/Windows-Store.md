@@ -1,9 +1,9 @@
 # C64U Slim-Viewer im Microsoft Store
 
 1. Im [Partner Center](https://partner.microsoft.com/dashboard/) eine Windows-App für den **C64U Slim-Viewer** anlegen und den Namen reservieren.
-2. In der Produktidentität die drei Werte übernehmen. In GitHub unter **Settings → Secrets and variables → Actions → Variables** eintragen.
+2. In der Produktidentität die drei Werte übernehmen. In GitHub unter **Settings → Secrets and variables → Actions → Secrets** als Repository-Secrets eintragen.
 
-| GitHub-Variable | Wert aus Partner Center |
+| GitHub-Secret | Wert aus Partner Center |
 | --- | --- |
 | `WINDOWS_STORE_PACKAGE_NAME` | `Package/Identity/Name` |
 | `WINDOWS_STORE_PUBLISHER` | `Package/Identity/Publisher`, einschließlich `CN=` |
