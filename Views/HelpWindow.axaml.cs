@@ -1,5 +1,4 @@
-using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Net;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -7,35 +6,24 @@ namespace C64UViewer.Views;
 
 public partial class HelpWindow : Window
 {
-    public HelpWindow()
+    public HelpWindow() : this(string.Empty, 11000, 11001)
+    {
+    }
+
+    public HelpWindow(string localIpAddress, int videoPort, int audioPort)
     {
         InitializeComponent();
-    }
-    
-    public void CloseClick(object sender, RoutedEventArgs e) => Close();
 
-    public void LinkClick(object sender, RoutedEventArgs e)
-{
-    var url = "https://github.com/gruetze-software/C64UViewer#readme";
-    
-    try
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            Process.Start("xdg-open", url);
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            Process.Start("open", url);
-        }
+        string host = IPAddress.TryParse(localIpAddress, out var address) && !IPAddress.IsLoopback(address)
+            ? localIpAddress
+            : "<viewer computer LAN IP>";
+
+        VideoDestination.Text = FormatDestination(host, videoPort);
+        AudioDestination.Text = FormatDestination(host, audioPort);
     }
-    catch
-    {
-        // Falls etwas schiefgeht, ignorieren wir es einfach
-    }
-}
+
+    private static string FormatDestination(string host, int port) =>
+        port is >= 1 and <= IPEndPoint.MaxPort ? $"{host}:{port}" : $"{host}:<valid UDP port>";
+
+    private void CloseClick(object? sender, RoutedEventArgs e) => Close();
 }

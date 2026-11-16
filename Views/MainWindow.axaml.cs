@@ -19,6 +19,13 @@ public partial class MainWindow : Window
 
     private async void CrtClick(object? sender, RoutedEventArgs e) => await ShowCrtSettingsAsync();
 
+    private async void SetupClick(object? sender, RoutedEventArgs e) => await ShowSetupAsync();
+
+    internal Task ShowSetupAsync() =>
+        DataContext is MainWindowViewModel viewModel
+            ? new HelpWindow(viewModel.LocalIpAddress, viewModel.UdpVideoPort, viewModel.UdpAudioPort).ShowDialog(this)
+            : Task.CompletedTask;
+
     internal async Task ShowCrtSettingsAsync()
     {
         if (DataContext is MainWindowViewModel viewModel)

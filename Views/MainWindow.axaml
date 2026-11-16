@@ -7,7 +7,7 @@
         x:DataType="vm:MainWindowViewModel"
         Title="{Binding AppTitle}"
         Background="#1C1C1C" Foreground="White"
-        Width="780" Height="636" MinWidth="620" MinHeight="360" WindowStartupLocation="CenterScreen">
+        Width="780" Height="636" MinWidth="650" MinHeight="360" WindowStartupLocation="CenterScreen">
     <Window.Styles>
         <Style Selector="Button">
             <Setter Property="Background" Value="#444444" />
@@ -68,8 +68,9 @@
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-                    <Button Content="Info" Click="InfoClick"/>
+                    <Button Content="Setup" Click="SetupClick" ToolTip.Tip="C64U stream setup"/>
                     <Button Content="CRT" Click="CrtClick"/>
+                    <Button Content="Info" Click="InfoClick"/>
                 </StackPanel>
             </Grid>
         </Border>

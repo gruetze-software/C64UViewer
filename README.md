@@ -20,6 +20,8 @@ Watch live VIC video and listen to audio from your Commodore 64 Ultimate or Ulti
 
 Download the package for your platform from [GitHub Releases](https://github.com/gruetze-software/C64UViewer/releases).
 
+<a href="https://snapcraft.io/c64uviewer"><img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store" width="160"></a>
+
 | Platform | Installation |
 | --- | --- |
 | Windows x64 | Extract the ZIP and run `c64uviewer.exe`. Keep the included `SDL2.dll` next to the EXE for audio. |
@@ -32,6 +34,8 @@ The release packages include the .NET runtime.
 
 Connect the C64U and the computer running the viewer to the same local network. Use wired Ethernet on the C64U for streaming. The viewer displays the destination address next to **PC IP**.
 
+On the C64U, open **WiFi Network Setup** and set Wi-Fi to **Disabled**. Check that **Wired Network Setup** shows an IPv4 address.
+
 | Stream | Default destination port | Viewer setting |
 | --- | --- | --- |
 | VIC video | UDP `11000` | **Video Port** |
@@ -41,6 +45,8 @@ Connect the C64U and the computer running the viewer to the same local network. 
 2. For sound, set the audio stream destination to the same IP address and the audio port, for example `192.168.178.50:11001`.
 3. Open the C64U's **Streams** menu and start the **VIC** stream. Start the **Audio** stream there as well if you want sound. Menu labels and shortcuts can vary by firmware.
 4. With both streams active, the viewer shows **STREAMING ACTIVE (VIDEO + AUDIO)**. Play a game or demo with sound to check audio output.
+
+If the C64U shows **“Cannot find MAC of specified host.”**, disable Wi-Fi on the C64U, check its Ethernet connection, and try again with the viewer computer's LAN address as the destination.
 
 If video works and audio is silent, check that the **Audio** stream is running on the C64U and that its destination matches the viewer's audio port. If a firewall blocks incoming traffic, allow the viewer on your private network in Windows or allow the relevant UDP ports. With UFW, for example:
 

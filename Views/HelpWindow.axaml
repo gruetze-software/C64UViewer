@@ -1,104 +1,58 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="C64UViewer.Views.HelpWindow"
-        Title="C64U Slim-Viewer - Instructions" Width="520" Height="550"
-        Icon="/Assets/icon.ico"
-        WindowStartupLocation="CenterOwner" Background="#1C1C1C" Foreground="White">
+        Title="C64U Slim-Viewer – Stream Setup" Width="560" Height="640"
+        MinWidth="360" MinHeight="360" Icon="/Assets/icon.ico"
+        ShowInTaskbar="False" WindowStartupLocation="CenterOwner">
+    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="16" Margin="24">
+        <TextBlock Text="Set up C64U streaming" FontSize="24" FontWeight="SemiBold"/>
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Spacing="16" Margin="0,0,12,0">
+                <StackPanel Spacing="6">
+                    <TextBlock Text="1. Prepare the viewer" FontWeight="SemiBold"/>
+                    <TextBlock Text="Connect the C64U by Ethernet and put both devices on the same local network. Keep the viewer open. Tick Audio in the viewer if you want sound."
+                               TextWrapping="Wrap"/>
+                    <TextBlock Text="On the C64U, open WiFi Network Setup and set Wi-Fi to Disabled. In Wired Network Setup, check that the C64U has an IPv4 address."
+                               TextWrapping="Wrap"/>
+                    <Border Background="#2D2D2D" CornerRadius="5" Padding="12">
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="14" RowSpacing="6">
+                            <TextBlock Text="Video (UDP)"/>
+                            <SelectableTextBlock Grid.Column="1" x:Name="VideoDestination"
+                                                 FontFamily="monospace" TextWrapping="Wrap"/>
+                            <TextBlock Grid.Row="1" Text="Audio (UDP)"/>
+                            <SelectableTextBlock Grid.Row="1" Grid.Column="1" x:Name="AudioDestination"
+                                                 FontFamily="monospace" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+                    <TextBlock Text="Use the viewer computer’s LAN address. If the address shown belongs to a VPN or the wrong adapter, substitute the LAN address on the C64U’s network."
+                               TextWrapping="Wrap"/>
+                </StackPanel>
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="25">
-        <TextBlock Grid.Row="0" Text="Instructions" FontSize="22" FontWeight="Bold" Foreground="#44A044" Margin="0,0,0,5"/>
-        <Separator Grid.Row="1" Background="#44A044" Margin="0,0,0,20"/>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="2. Start VIC video on the C64U" FontWeight="SemiBold"/>
+                    <TextBlock Text="Open the C64U menu and press F1 to open the Tools menu. Under Streams, select VIC Stream and choose Start or Send to. Enter the Video address above, including the port, and confirm with Return."
+                               TextWrapping="Wrap"/>
+                    <TextBlock Text="On older Ultimate 64 firmware, press F5 for the action menu and select Start VIC Stream. The Data Streams configuration screen stores destinations for reuse; it does not start transmission."
+                               TextWrapping="Wrap"/>
+                </StackPanel>
 
-        <ScrollViewer Grid.Row="2">
-            <StackPanel Spacing="15">
-                
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="1." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="Ensure your Commodore 64 Ultimate (C64U) and this PC are in the same network."/>
-                </Grid>
+                <StackPanel Spacing="6">
+                    <TextBlock Text="3. Start audio on the C64U" FontWeight="SemiBold"/>
+                    <TextBlock Text="Go back to Tools → Streams and select Audio Stream, then Start or Send to. On older firmware, select Start Audio Stream in the F5 menu. Enter the Audio address above and confirm with Return. Leave the VIC stream running."
+                               TextWrapping="Wrap"/>
+                </StackPanel>
 
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="2." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="Check your Firewall: Ensure that UDP Port 11000 (or your chosen port) is allowed for incoming traffic on this PC. On Windows, a firewall message will appear on first startup. On Linux, the standard port 11000 should already be open."/>
-                </Grid>
-
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="3." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="Note your PC's IP address (displayed at the top of the main window). You will need this for the next steps."/>
-                </Grid>
-
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="4." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="On your C64U: Connect your C64U to the LAN. Disable Wi-Fi under the main menu -> 'WIRED NETWORK SETUP'."/>
-                </Grid>
-
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="5." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="On your C64U: Open the menu F2 (SHIFT+F1) -> 'Data Streams' -> 'Stream VIC to' -> Enter your PC's IP address followed by the port number (default is 11000)."/>
-                </Grid>
-
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="6." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="On your C64U: Go to the main menu. Press F1 -> Streams -> VIC Stream -> Enter"/>
-                </Grid>
-
-                <Grid ColumnDefinitions="30,*">
-                    <TextBlock Grid.Column="0" Text="7." FontWeight="Bold" Foreground="#44A044"/>
-                    <SelectableTextBlock Grid.Column="1" TextWrapping="Wrap" 
-                            Text="The status LED in this viewer will turn green as soon as data is received. The stream starts automatically!"/>
-                </Grid>
-
+                <StackPanel Spacing="6">
+                    <TextBlock Text="4. Check picture and sound" FontWeight="SemiBold"/>
+                    <TextBlock Text="Cannot find MAC of specified host." FontWeight="SemiBold"/>
+                    <TextBlock Text="If the C64U shows this error, disable Wi-Fi on the C64U, check the Ethernet connection and try again. Enter the viewer computer's LAN address as the destination."
+                               TextWrapping="Wrap"/>
+                    <TextBlock Text="Start a game, demo or SID tune with sound. The viewer’s status bar should read STREAMING ACTIVE (VIDEO + AUDIO). If a stream is missing, check its destination and allow inbound UDP on its configured port in the computer’s firewall. If SDL2 is unavailable, see the viewer’s status-bar warning."
+                               TextWrapping="Wrap"/>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
-
-        <Button Grid.Row="3" 
-            Content="Close" 
-            HorizontalAlignment="Center" 
-            Padding="30,10"
-            FontSize="16"
-            FontWeight="Bold"
-            Click="CloseClick" 
-            Margin="0,20,0,0">
-            <Button.Styles>
-                <Style Selector="Button">
-                    <Setter Property="Background" Value="#44A044" />
-                    <Setter Property="Foreground" Value="White" />
-                    <Setter Property="CornerRadius" Value="4" />
-                </Style>
-                <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                    <Setter Property="Background" Value="#55C055" />
-                    <Setter Property="TextBlock.Foreground" Value="White" />
-                </Style>
-            </Button.Styles>
-        </Button>
-
-        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="3">
-            <TextBlock Text="Created by Grütze-Software" 
-                    FontSize="10" 
-                    Foreground="#888888" 
-                    HorizontalAlignment="Right"/>
-            <Button Content="Visit my Homepage on GitHub" 
-                    FontSize="10" 
-                    Foreground="#44A044"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    Padding="0"
-                    Cursor="Hand"
-                    Click="LinkClick">
-                <Button.Styles>
-                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="TextBlock.Foreground" Value="#55C055" />
-                        <Setter Property="TextBlock.TextDecorations" Value="Underline" />
-                    </Style>
-                </Button.Styles>
-            </Button>
-        </StackPanel>
-    </Grid>    
+        <Button Grid.Row="2" Content="Close" Click="CloseClick" IsDefault="True" IsCancel="True"
+                HorizontalAlignment="Right" MinWidth="92" HorizontalContentAlignment="Center"/>
+    </Grid>
 </Window>

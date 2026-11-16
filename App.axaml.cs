@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -26,9 +27,6 @@ public partial class App : Application
             };
             desktop.MainWindow = window;
 
-            if (OperatingSystem.IsMacOS())
-                ConfigureMacMenu(window);
-
             // Beim Beenden der App aufräumen
             desktop.Exit += (sender, args) =>
             {
@@ -40,15 +38,17 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void ConfigureMacMenu(MainWindow window)
-    {
-        var info = new NativeMenuItem("About C64U Slim-Viewer");
-        info.Click += async (_, _) => await window.ShowInfoAsync();
-        var crt = new NativeMenuItem("CRT Effects…");
-        crt.Click += async (_, _) => await window.ShowCrtSettingsAsync();
-        var menu = new NativeMenu();
-        menu.Items.Add(info);
-        menu.Items.Add(crt);
-        NativeMenu.SetMenu(this, menu);
-    }
+    private async void AboutMenuClick(object? sender, EventArgs e) =>
+        await OpenMainWindowDialogAsync(window => window.ShowInfoAsync());
+
+    private async void SetupMenuClick(object? sender, EventArgs e) =>
+        await OpenMainWindowDialogAsync(window => window.ShowSetupAsync());
+
+    private async void CrtMenuClick(object? sender, EventArgs e) =>
+        await OpenMainWindowDialogAsync(window => window.ShowCrtSettingsAsync());
+
+    private Task OpenMainWindowDialogAsync(Func<MainWindow, Task> showDialog) =>
+        ApplicationLifetime is IClassicDesktopStyleApplicationLifetime { MainWindow: MainWindow { IsVisible: true, IsEnabled: true } window }
+            ? showDialog(window)
+            : Task.CompletedTask;
 }

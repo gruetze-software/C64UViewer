@@ -6,6 +6,14 @@
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="About C64U Slim-Viewer" Click="AboutMenuClick"/>
+            <NativeMenuItem Header="Stream Setup…" Click="SetupMenuClick"/>
+            <NativeMenuItem Header="CRT Effects…" Click="CrtMenuClick"/>
+        </NativeMenu>
+    </NativeMenu.Menu>
+
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
